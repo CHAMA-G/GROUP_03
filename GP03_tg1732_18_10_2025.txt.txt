@@ -1,0 +1,194 @@
+--------Create Table-------
+
+
+
+CREATE TABLE Lecture_student(
+    lecture_id VARCHAR(5),
+    student_id VARCHAR(6)
+    );
+
+
+
+CREATE TABLE Admin(   
+     nic CHAR(12),
+     admin_id VARCHAR(10) PRIMARY KEY,
+     role  VARCHAR(10)
+    );
+
+
+
+CREATE TABLE Lecture(
+    lecture_id VARCHAR(5) PRIMARY KEY,
+    nic CHAR(12),
+    position VARCHAR(20),
+    dep_id CHAR(4)
+    );
+
+CREATE TABLE Lecture_Course(
+    lecture_id VARCHAR(5),
+    course_code CHAR(8)
+    );
+
+
+
+
+-------Insert data-------
+
+
+
+INSERT INTO Lecture_student VALUES
+    ('LC01','TG-001'), 
+    ('LC02','TG-001'), 
+    ('LC03','TG-001'), 
+    ('LC04','TG-001'), 
+    ('LC05','TG-001'), 
+    ('LC07','TG-001'), 
+    ('LC09','TG-001'), 
+
+    ('LC01','TG-002'), 
+    ('LC02','TG-002'), 
+    ('LC03','TG-002'), 
+    ('LC04','TG-002'), 
+    ('LC05','TG-002'), 
+    ('LC07','TG-002'), 
+    ('LC09','TG-002'),
+
+    ('LC01','TG-003'), 
+    ('LC02','TG-003'), 
+    ('LC03','TG-003'), 
+    ('LC04','TG-003'), 
+    ('LC05','TG-003'), 
+    ('LC07','TG-003'), 
+    ('LC09','TG-003'),
+
+    ('LC01','TG-004'), 
+    ('LC02','TG-004'), 
+    ('LC03','TG-004'), 
+    ('LC04','TG-004'), 
+    ('LC05','TG-004'), 
+    ('LC07','TG-004'), 
+    ('LC09','TG-004'),
+
+    ('LC06','TG-005'),
+    ('LC08','TG-005'),
+    ('LC09','TG-005'),
+
+    ('LC10','TG-006'), 
+    ('LC07','TG-006'),
+    ('LC09','TG-006'),
+
+    ('LC10','TG-007'), 
+    ('LC07','TG-007'),
+    ('LC09','TG-007'),
+
+    ('LC01','TG-008'), 
+    ('LC02','TG-008'), 
+    ('LC03','TG-008'), 
+    ('LC04','TG-008'), 
+    ('LC05','TG-008'), 
+    ('LC07','TG-008'), 
+    ('LC09','TG-008'),
+
+    ('LC01','TG-009'), 
+    ('LC02','TG-009'), 
+    ('LC03','TG-009'), 
+    ('LC04','TG-009'), 
+    ('LC05','TG-009'), 
+    ('LC07','TG-009'), 
+    ('LC09','TG-009'),
+
+    ('LC01','TG-010'), 
+    ('LC02','TG-010'), 
+    ('LC03','TG-010'), 
+    ('LC04','TG-010'), 
+    ('LC05','TG-010'), 
+    ('LC07','TG-010'), 
+    ('LC09','TG-010'),
+ 
+    ('LC10','TG-011'), 
+    ('LC07','TG-011'),
+    ('LC09','TG-011'),
+
+    ('LC10','TG-012'), 
+    ('LC07','TG-012'),
+    ('LC09','TG-012'),
+ 
+    ('LC10','TG-013'), 
+    ('LC07','TG-013'),
+    ('LC09','TG-013'),
+
+    ('LC01','TG-014'), 
+    ('LC02','TG-014'), 
+    ('LC03','TG-014'), 
+    ('LC04','TG-014'), 
+    ('LC05','TG-014'), 
+    ('LC07','TG-014'), 
+    ('LC09','TG-014'),
+
+    ('LC01','TG-015'), 
+    ('LC02','TG-015'), 
+    ('LC03','TG-015'), 
+    ('LC04','TG-015'), 
+    ('LC05','TG-015'), 
+    ('LC07','TG-015'), 
+    ('LC09','TG-015'),
+
+    ('LC01','TG-016'), 
+    ('LC02','TG-016'), 
+    ('LC03','TG-016'), 
+    ('LC04','TG-016'), 
+    ('LC05','TG-016'), 
+    ('LC07','TG-016'), 
+    ('LC09','TG-016'),
+
+    ('LC06','TG-017'),
+    ('LC08','TG-017'),
+    ('LC09','TG-017'),
+
+    ('LC06','TG-018'),
+    ('LC08','TG-018'),
+    ('LC09','TG-018'),
+
+    ('LC06','TG-019'),
+    ('LC08','TG-019'),
+    ('LC09','TG-019'),
+
+    ('LC06','TG-020'),
+    ('LC08','TG-020'),
+    ('LC09','TG-020');
+
+
+INSERT Admin VALUES
+    ('12345678910A','A1','Administrator');
+
+
+
+
+INSERT INTO Lecture VALUES
+    ('LC01', '12345678111V', 'Lecture', 'D001'),  
+    ('LC02', '12345678112V', 'professor', 'D001'), 
+    ('LC03', '12345678113V', 'Lecture', 'D001'), 
+    ('LC04', '12345678114V', 'professor', 'D001'), 
+    ('LC05', '12345678115V', 'Lecture', 'D001'), 
+    ('LC06', '12345678116V', 'Assistant Lecturer', 'D002'),
+    ('LC07', '12345678117V', 'Lecture', 'D004'), 
+    ('LC08', '12345678118V', 'Lecture', 'D004'), 
+    ('LC09', '12345678119V', 'Senior Lecturer', 'D004'), 
+    ('LC10', '12345678101V', 'Lecturer', 'D003'); 
+
+
+
+INSERT INTO Lecture_Course VALUES
+    ('LC01','ICT1233'),
+    ('LC02','ICT1213'),
+    ('LC03','ICT1213'),
+    ('LC04','ICT1242'),
+    ('LC05','ICT1212'),
+    ('LC05','ICT1222'),
+    ('LC06','TMS2022'),
+    ('LC06','TMS4302'),
+    ('LC07','ENG1212'),
+    ('LC08','ENG1212'),
+    ('LC09','TCS1212'),
+    ('LC10','BST4024');
+
