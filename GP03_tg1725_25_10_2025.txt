@@ -1,0 +1,108 @@
+--final marks view--
+
+CREATE VIEW final_marks AS
+SELECT 
+    m.mark_id,
+    MIN(m.student_id) AS student_id,
+    MIN(m.course_code) AS course_code,
+    CASE
+        WHEN (m.end_practical = 0 OR m.mid_practical = 0)
+            THEN ((m.end_theory / 100) * 60) + cwoa.CA_marks
+        WHEN (m.end_theory = 0 OR m.mid_theory = 0)
+            THEN ((m.end_practical / 100) * 60) + cwoa.CA_marks
+        ELSE
+            (((m.end_practical + m.end_theory) / 200) * 60) + cwoa.CA_marks
+    END AS final_result
+FROM 
+    mark m
+INNER JOIN 
+    ca_result_with_attendance cwa ON m.student_id = cwa.student_id AND m.course_code = cwa.course_code 
+INNER JOIN
+    ca_result_without_attendance cwoa ON m.student_id = cwoa.student_id AND m.course_code = cwoa.course_code
+WHERE 
+    cwa.CA_Eligibility = 'Eligible' 
+    AND cwa.Eligibility = 'Eligible'
+GROUP BY 
+    m.mark_id, 
+    m.end_practical,        
+    m.mid_practical,        
+    m.end_theory,          
+    m.mid_theory,          
+    cwoa.CA_marks,          
+    cwa.CA_Eligibility,     
+    cwa.Eligibility,        
+    cwa.student_id,         
+    cwoa.student_id,      
+    cwa.course_code,     
+    cwoa.course_code       
+ORDER BY 
+    student_id ASC;
+
+SELECT * FROM final_marks;
+
+--Final mark without CA mark -- 
+
+CREATE VIEW exam_mark_without_final_mark AS
+SELECT
+    s.student_id,
+    m.course_code,
+    m.end_theory,
+    m.end_practical,
+    CASE
+        WHEN m.end_theory = 0 THEN m.end_practical * 0.6
+        WHEN m.end_practical = 0 THEN m.end_theory * 0.6
+        WHEN m.end_theory IS NOT NULL AND m.end_practical IS NOT NULL THEN ROUND(((end_theory + end_practical) /200)*60)
+        ELSE NULL
+    END AS final_exam_mark
+FROM mark m 
+INNER JOIN student s  ON s.student_id = m.student_id
+    WHERE s.state != 'suspended';
+
+----------- Suspend student every mark updated  WH for VIEW -------- 
+
+CREATE  VIEW mark_and_student AS
+SELECT 
+    student.student_id, 
+    student.state,
+    mark.course_code,
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.quiz_1
+    END AS quiz_1,
+
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.quiz_2
+    END AS quiz_2,
+
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.quiz_3
+    END AS quiz_3,
+
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.assesment
+    END AS assesment,
+
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.mid_theory
+    END AS mid_theory,
+
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.mid_practical
+    END AS mid_practical,
+
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.end_theory
+    END AS end_theory,
+
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.end_practical
+    END AS end_practical
+FROM mark
+INNER JOIN student ON mark.student_id = student.student_id;
