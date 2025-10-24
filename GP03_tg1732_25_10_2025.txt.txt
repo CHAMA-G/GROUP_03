@@ -1,0 +1,55 @@
+-- view final mark by student id -- 
+
+DELIMITER //
+
+CREATE PROCEDURE viewresult_from_id(
+    IN id_number VARCHAR(20)
+)
+BEGIN
+    SELECT DISTINCT course_code, final_result
+    FROM final_marks
+    WHERE student_id = id_number;
+END //
+
+DELIMITER ;
+
+-- view_result_from_department
+
+DELIMITER //
+
+CREATE PROCEDURE view_result_from_department(
+    IN Enter_dept_id CHAR(4)
+)
+BEGIN
+    SELECT 
+        course.dep_id,
+        final_marks.student_id,
+        course.course_code,
+        final_marks.final_result
+    FROM 
+        course
+    INNER JOIN 
+        final_marks ON course.course_code = final_marks.course_code
+    WHERE 
+        course.dep_id = Enter_dept_id;
+END //
+
+DELIMITER ;
+
+CALL view_result_from_department('D001');
+
+
+--view Notice published by Lecturer
+
+DELIMITER //
+
+CREATE PROCEDURE ViewLecturerNotice(IN lecture_id VARCHAR(5))
+BEGIN
+    SELECT date, description AS 'Notice'
+    FROM notice
+    WHERE notice.lecture_id = lecture_id; 
+END //
+
+DELIMITER ;
+
+CALL ViewLecturerNotice ('LC01');
