@@ -1,0 +1,23 @@
+--Calculate SGPA
+
+CREATE VIEW SGPA AS
+SELECT s.student_id,(SUM(s.pointCreditvalue))/ SUM(s.Credit) AS SGPA
+FROM Student_Grade_Credit s
+INNER JOIN Course c  ON s.course_code = c.course_code 
+WHERE c.dep_id='D001' OR c.dep_id='D004'
+GROUP BY s.student_id;
+
+--Calculate CGPA
+
+CREATE VIEW CGPA AS
+SELECT s.student_id,(SUM(s.pointCreditvalue))/ SUM(s.Credit) AS CGPA
+FROM Student_Grade_Credit s
+INNER JOIN Course c ON s.course_code = c.course_code 
+WHERE c.dep_id='D001' AND c.course_code != 'ENG1212'
+GROUP BY s.student_id;
+
+--Calculate GPA
+
+CREATE VIEW ALL_GPA AS 
+SELECT s.Student_ID,s.SGPA,c.CGPA FROM SGPA s,CGPA c
+WHERE s.Student_ID=c.Student_ID;
