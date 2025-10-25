@@ -13,7 +13,9 @@ END //
 
 DELIMITER ;
 
--- view_result_from_department
+CALL viewresult_from_id('TG-003');
+
+-- view_result_from_department --
 
 DELIMITER //
 
@@ -39,7 +41,7 @@ DELIMITER ;
 CALL view_result_from_department('D001');
 
 
---view Notice published by Lecturer
+-- view Notice published by Lecturer --
 
 DELIMITER //
 
