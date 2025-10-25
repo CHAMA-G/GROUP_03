@@ -1,0 +1,52 @@
+-- Getting mid marks by using student_id
+
+DELIMITER //
+CREATE PROCEDURE Mid_Mark(IN  studentm VARCHAR(20) )
+BEGIN
+select student_id,course_code, Mid_marks from CA_Result_Without_Attendance where student_id= studentm;
+END//
+DELIMITER ;
+
+CALL Mid_Mark('TG-001');
+
+
+
+
+-- Getting mid marks by using course_code
+
+DELIMITER //
+CREATE PROCEDURE subjectMid_Mark(IN coursem VARCHAR(20) )
+BEGIN
+select student_id,course_code, Mid_marks from CA_Result_Without_Attendance where course_code= coursem;
+END//
+DELIMITER ;
+
+CALL subjectMid_Mark('ENG1212');
+
+
+
+
+--  Getting CA marks in subjects by using course_code
+
+DELIMITER //
+CREATE PROCEDURE SCAmarks(IN coursec VARCHAR(20))
+BEGIN
+select student_id,course_code,CA_marks from CA_Result_Without_Attendance where course_code=coursec;
+END//
+DELIMITER ;
+
+CALL SCAmarks('ENG1212');
+
+
+
+
+-- Getting CA marks by using student_id
+
+DELIMITER //
+CREATE PROCEDURE UCAmarks(IN studentc VARCHAR(20))
+BEGIN
+select student_id,course_code,CA_marks from CA_Result_Without_Attendance where student_id=studentc;
+END//
+DELIMITER ;
+
+CALL UCAmarks('TG-011');
