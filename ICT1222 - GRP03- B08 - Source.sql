@@ -1,0 +1,2621 @@
+CREATE DATABASE teamAlpha;
+
+USE teamAlpha;
+
+CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin123';
+CREATE USER 'dean'@'localhost' IDENTIFIED BY 'dean123';
+CREATE USER 'lecturer'@'localhost' IDENTIFIED BY 'lecture123';
+CREATE USER 'techofficer'@'localhost' IDENTIFIED BY 'techofficer123';
+CREATE USER 'student'@'localhost' IDENTIFIED BY 'student123';
+
+CREATE TABLE User(
+  nic CHAR(12) PRIMARY KEY,
+  f_name VARCHAR(20),
+  l_name VARCHAR(20),
+  address VARCHAR(25),
+  email VARCHAR (15),
+  gender VARCHAR(6),
+  bod DATE 
+    );
+
+CREATE TABLE Admin(   
+     nic CHAR(12),
+     admin_id VARCHAR(10) PRIMARY KEY,
+     role  VARCHAR(20)
+    );
+
+CREATE TABLE Dean(
+    dean_id CHAR(5) PRIMARY KEY,
+    nic CHAR(12) 
+    );
+
+CREATE TABLE Student(   
+    student_id VARCHAR(6) PRIMARY KEY, 
+    nic CHAR(12),
+    state VARCHAR(30),
+    dep_id CHAR(4)
+    );
+
+CREATE TABLE Lecture(
+    lecture_id VARCHAR(5) PRIMARY KEY,
+    nic CHAR(12),
+    position VARCHAR(20),
+    dep_id CHAR(4)
+    );
+
+CREATE TABLE Technical_officer(
+    tech_officer_id VARCHAR(6) PRIMARY KEY,
+    nic CHAR(12),
+    role VARCHAR(30)
+    );
+
+CREATE TABLE Course(
+    course_code char(8) PRIMARY KEY,
+    course_name varchar(50),
+    course_credit INT,
+    course_houre INT,
+    course_type varchar(15) NOT NULL,
+    dep_id CHAR(4)
+    );
+
+CREATE TABLE Department(
+    dep_id CHAR(4) PRIMARY KEY,
+    dep_name VARCHAR(100),
+    dean_id CHAR(5),
+    admin_id VARCHAR(10) 
+    );
+
+CREATE TABLE Mark(
+    mark_id CHAR(10) PRIMARY KEY,
+    quiz_1 INT,
+    quiz_2 INT,
+    quiz_3 INT,
+    assesment INT,
+    mid_theory INT,
+    mid_practical INT,
+    end_theory INT,
+    end_practical INT,
+    student_id VARCHAR(6),
+    course_code char(8)
+);
+
+CREATE TABLE Medical(
+    medical_id CHAR(10) PRIMARY KEY,
+    description  VARCHAR(50),
+    s_date DATE,
+    e_date DATE,
+    student_id VARCHAR(6),
+    tech_officer_iD CHAR(10)
+    );
+
+CREATE TABLE Attendence(
+    date DATE,
+    att_state VARCHAR(20),
+    session_type VARCHAR(25),
+    student_id VARCHAR(6),
+    medical_id CHAR(10),
+    tech_officer_id VARCHAR(6),
+    course_code CHAR(8)
+    );
+
+CREATE TABLE Notice(
+    notice_id VARCHAR(6) PRIMARY KEY,
+    description VARCHAR(100),
+    date DATE,
+    lecture_id VARCHAR(5)
+    );
+
+CREATE TABLE Lecture_student(
+    lecture_id VARCHAR(5),
+    student_id VARCHAR(6)
+    );
+
+CREATE TABLE Student_notice(
+    student_id VARCHAR(6),
+    notice_id VARCHAR(6)
+    );
+
+CREATE TABLE User_contact(
+    nic CHAR(12) PRIMARY KEY,
+    contact_no CHAR(10)
+    );
+
+CREATE TABLE Lecture_Course(
+    lecture_id VARCHAR(5),
+    course_code CHAR(8)
+    );
+
+CREATE TABLE Student_Course(
+   student_id VARCHAR(6),
+   course_code char(8)
+    );
+
+ALTER TABLE Dean ADD FOREIGN KEY (nic) REFERENCES User(nic);
+ALTER TABLE Student ADD FOREIGN KEY (nic) REFERENCES User(nic);
+ALTER TABLE Lecture ADD FOREIGN KEY (nic) REFERENCES User(nic);
+ALTER TABLE Admin ADD FOREIGN KEY (nic) REFERENCES User(nic);
+ALTER TABLE Technical_officer ADD FOREIGN KEY (nic) REFERENCES User(nic);
+ALTER TABLE User_contact ADD FOREIGN KEY (nic) REFERENCES User(nic);
+
+ALTER TABLE Lecture_student ADD FOREIGN KEY (student_id) REFERENCES Student(student_id);
+ALTER TABLE Attendence ADD FOREIGN KEY (student_id) REFERENCES Student(student_id);
+ALTER TABLE Student_Course ADD FOREIGN KEY (student_id) REFERENCES Student(student_id);
+ALTER TABLE Mark ADD FOREIGN KEY (student_id) REFERENCES Student(student_id);
+ALTER TABLE Medical ADD FOREIGN KEY (student_id) REFERENCES Student(student_id);
+
+ALTER TABLE Notice ADD FOREIGN KEY (lecture_id) REFERENCES  Lecture(lecture_id);
+ALTER TABLE Lecture_student ADD FOREIGN KEY (lecture_id) REFERENCES Lecture(lecture_id);
+ALTER TABLE Lecture_Course ADD FOREIGN KEY (lecture_id) REFERENCES Lecture(lecture_id);
+
+ALTER TABLE Department ADD FOREIGN KEY (dean_id) REFERENCES Dean(dean_id);
+
+ALTER TABLE Medical ADD FOREIGN KEY (tech_officer_iD) REFERENCES Technical_officer(tech_officer_id);
+ALTER TABLE Attendence ADD FOREIGN KEY (tech_officer_id) REFERENCES Technical_officer(tech_officer_id);
+
+ALTER TABLE Department ADD FOREIGN KEY (admin_id) REFERENCES Admin(admin_id);
+
+ALTER TABLE Attendence ADD FOREIGN KEY (medical_id) REFERENCES Medical(medical_id);
+
+ALTER TABLE Lecture ADD FOREIGN KEY (dep_id) REFERENCES Department(dep_id);
+ALTER TABLE Student ADD FOREIGN KEY (dep_id) REFERENCES Department(dep_id);
+ALTER TABLE Course ADD FOREIGN KEY (dep_id) REFERENCES Department(dep_id);
+
+ALTER TABLE Lecture_Course ADD FOREIGN KEY (course_code) REFERENCES Course(course_code);
+ALTER TABLE Student_Course ADD FOREIGN KEY (course_code) REFERENCES Course(course_code);
+ALTER TABLE Mark ADD FOREIGN KEY (course_code) REFERENCES Course(course_code);
+ALTER TABLE Attendence ADD FOREIGN KEY (course_code) REFERENCES Course(course_code);
+
+ALTER TABLE Student_notice ADD FOREIGN KEY (student_id) REFERENCES Student(student_id);
+ALTER TABLE Student_notice ADD FOREIGN KEY (notice_id) REFERENCES Notice(notice_id);
+
+
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+GRANT ALL PRIVILEGES ON *.* TO 'dean'@'localhost';
+FLUSH PRIVILEGES;
+
+GRANT ALL PRIVILEGES ON *.* TO 'lecturer'@'localhost';
+FLUSH PRIVILEGES;
+
+GRANT SELECT,INSERT,UPDATE ON teamAlpha.attendence TO 'techofficer'@'localhost';
+FLUSH PRIVILEGES;
+GRANT SELECT,INSERT,UPDATE ON teamAlpha.medical TO 'techofficer'@'localhost';
+FLUSH PRIVILEGES;
+
+GRANT SELECT ON teamAlpha.attendence TO 'student'@'localhost';
+FLUSH PRIVILEGES;
+GRANT SELECT ON teamAlpha.mark TO 'student'@'localhost';
+FLUSH PRIVILEGES;
+
+
+INSERT INTO User VALUES
+    ('123456789011', 'Anushka', 'Fernando', '123 Galle Rd', 'anushka@a.lk', 'Female', '1990-01-15'), 
+    ('123456789012', 'Kamal', 'Perera', '456 Colombo St', 'kamal@my.lk', 'Male', '1988-02-20'),
+    ('123456789013', 'Dilshan', 'Gunawardena', '789 Kandy Rd', 'dilshan@my.lk', 'Male', '1992-03-10'),
+    ('123456789014', 'Saman', 'Rajapaksha', '135 Negombo St', 'saman@my.lk', 'Female', '1991-04-25'),
+    ('123456789015', 'Tharindu', 'Jayasinghe', '246 Matara Rd', 'tharindu@my.lk', 'Male', '1989-05-30'),
+    ('123456789016', 'Nimesha', 'Dissanayake', '357 Jaffna St', 'nimesha@my.lk', 'Female', '1993-06-18'),
+    ('123456789017', 'Pradeep', 'Silva', '468 Batticaloa Rd', 'pradeep@my.lk', 'Male', '1994-07-22'),
+    ('123456789018', 'Shanika', 'Weerasinghe', '579 Trincomalee Rd', 'shanika@my.lk', 'Female', '1995-08-12'),
+    ('12345678901V', 'Ian', 'Ariyadasa', '680 Kegalle St', 'ian@my.lk', 'Male', '1987-09-05'),
+    ('123456789020', 'Shalini', 'Samaranayake', '791 Kurunegala St', 'shalini@my.lk', 'Female', '1986-10-15'),
+    ('123456789021', 'Kanishka', 'Buddhika', '902 Galle St', 'kanishka@my.lk', 'Male', '1992-11-20'),
+    ('123456789022', 'Liam', 'Jayawardena', '113 Puttalam Rd', 'liam@my.lk', 'Male', '1993-12-05'),
+    ('123456789023', 'Mia', 'Kumara', '224 Matale St', 'mia@my.lk', 'Female', '1991-01-30'),
+    ('123456789024', 'Noah', 'Fernando', '335 Ratnapura St', 'noah@my.lk', 'Male', '1994-02-25'),
+    ('123456789025', 'Olivia', 'Samarasinghe', '446 Badulla St', 'olivia@my.lk', 'Female', '1990-03-15'),
+    ('12345678902V', 'Paul', 'Wijesekera', '557 Gampaha Rd', 'paul@my.lk', 'Male', '1988-04-10'),
+    ('123456789027', 'Quinn', 'Perera', '668 Anuradhapura St', 'quinn@my.lk', 'Female', '1992-05-20'),
+    ('123456789028', 'Riley', 'Rathnayake', '779 Polonnaruwa Rd', 'riley@my.lk', 'Female', '1995-06-30'),
+    ('123456789029', 'Sam', 'Hewage', '880 Kandy Rd', 'sam@my.lk', 'Male', '1989-07-15'),
+    ('12345678903V', 'Tina', 'Narangoda', '991 Nuwara Eliya Rd', 'tina@my.lk', 'Female', '1991-08-18'),
+
+    ('12345678111V', 'Ursula', 'De Silva', '112 Hikkaduwa Rd', 'ursula@my.lk', 'Female', '1994-09-22'), 
+    ('12345678112V', 'Victor', 'Banda', '223 Ambalangoda Rd', 'victor@my.lk', 'Male', '1993-10-10'),
+    ('12345678113V', 'Wendy', 'Karunaratne', '334 Weligama Rd', 'wendy@my.lk', 'Female', '1987-11-02'),
+    ('12345678114V', 'Xander', 'Kumarasinghe', '445 Beruwala Rd', 'xander@my.lk', 'Male', '1992-12-05'),
+    ('12345678115V', 'Yara', 'Dissanayake', '556 Colombo 7', 'yara@my.lk', 'Female', '1990-01-14'),
+    ('12345678116V', 'Zach', 'Wijeratne', '667 Nugegoda Rd', 'zach@my.lk', 'Male', '1989-02-28'),
+    ('12345678117V', 'Ava', 'Fernando', '778 Colombo 10', 'ava@my.lk', 'Female', '1994-03-21'),
+    ('12345678118V', 'Brian', 'De Alwis', '889 Moratuwa Rd', 'brian@my.lk', 'Male', '1988-04-16'),
+    ('12345678119V', 'Clara', 'Liyanage', '990 Gampaha 11', 'clara@my.lk', 'Female', '1992-05-30'),
+    ('12345678101V', 'Daniel', 'Jayaratne', '101 Negombo 12', 'daniel@my.lk', 'Male', '1991-06-14'),
+
+    ('12345678910A', 'Eva', 'Perera', '212 Trincomalee 13', 'eva@my.lk', 'Female', '1995-07-10'), 
+
+    ('123456789V', 'Felix', 'Seneviratne', '323 Kandy 14', 'felix@my.lk', 'Male', '1990-08-22'), 
+    ('987654321X', 'Gina', 'Rajapakse', '434 Matara 15', 'gina@my.lk', 'Female', '1987-09-30'),
+    ('456123789V', 'Henry', 'Kumar', '545 Batticaloa 16', 'henry@my.lk', 'Male', '1992-10-05'),
+    ('789321456V', 'Isla', 'Dissanayake', '656 Jaffna 17', 'isla@my.lk', 'Female', '1993-11-18'),
+    ('159753486X', 'Jack', 'Fernando', '767 Kegalle 18', 'jack@my.lk', 'Male', '1989-12-25'),
+
+    ('2345678902V', 'Kira', 'Muthumala', '878 Galle 19', 'kira@my.lk', 'Female', '1991-01-02'); 
+
+
+INSERT INTO Dean VALUES
+    ("DE1","2345678902V");
+
+INSERT INTO Technical_officer VALUES
+   ('TO001', '123456789V', 'Medical Administrator'),
+   ('TO002', '987654321X', 'Attendence Administrator'),
+   ('TO003', '456123789V', 'Technical Support'),
+   ('TO004', '789321456V', 'System Administrator'),
+   ('TO005', '159753486X', 'Security Analyst');
+
+   INSERT Admin VALUES
+    ('12345678910A','A1','Administrator');
+
+INSERT INTO Department VALUES
+    ("D001","Department of Information & Communication Technology","DE1","A1"),
+    ("D002","Department of Engineering Technology","DE1","A1"),
+    ("D003","Department of Biosystems Technology","DE1","A1"),
+    ("D004","Department of Multidisciplinary Studies","DE1","A1");
+
+INSERT INTO User_contact VALUES
+    ('123456789011', '0724567890'),
+    ('123456789012', '0785678901'),
+    ('123456789013', '0716789012'),
+    ('123456789014', '0717890123'),
+    ('123456789015', '0728901234'),
+    ('123456789016', '0789012345'),
+    ('123456789017', '0710123456'),
+    ('123456789018', '0711234567'),
+    ('12345678901V', '0712345678'),
+    ('123456789020', '0713456789'),
+    ('123456789021', '0714567890'),
+    ('123456789022', '0715678901'),
+    ('123456789023', '0746789012'),
+    ('123456789024', '0787890123'),
+    ('123456789025', '0728901234'),
+    ('12345678902V', '0789012345'),
+    ('123456789027', '0710123456'),
+    ('123456789028', '0711234567'),
+    ('123456789029', '0712345678'),
+    ('12345678903V', '0783456789'),
+    ('12345678111V', '0754567890'),
+    ('12345678112V', '0715678901'),
+    ('12345678113V', '0726789012'),
+    ('12345678114V', '0787890123'),
+    ('12345678115V', '0728901234'),
+    ('12345678116V', '0729012345'),
+    ('12345678117V', '0710123456'),
+    ('12345678118V', '0781234567'),
+    ('12345678119V', '0722345678'),
+    ('12345678101V', '0723456789'),
+    ('12345678910A', '0714567890'),
+    ('123456789V', '0715678901'),
+    ('987654321X', '0716789012'),
+    ('456123789V', '0787890123'),
+    ('789321456V', '0788901234'),
+    ('159753486X', '0729012345'),
+    ('2345678902V', '0720123456');
+
+INSERT INTO Student VALUES
+    ('TG-001', '123456789011', 'Active', 'D001'),
+    ('TG-002', '123456789012', 'Active', 'D001'),
+    ('TG-003', '123456789013', 'Active', 'D001'),
+    ('TG-004', '123456789014', 'repeat', 'D001'),
+    ('TG-005', '123456789015', 'Active', 'D002'),
+    ('TG-006', '123456789016', 'Active', 'D003'),
+    ('TG-007', '123456789017', 'Active', 'D003'),
+    ('TG-008', '123456789018', 'suspended','D001'),
+    ('TG-009', '12345678901V', 'Active', 'D001'),
+    ('TG-010', '123456789020', 'suspended', 'D001'),
+    ('TG-011', '123456789021', 'Active', 'D003'),
+    ('TG-012', '123456789022', 'Active', 'D003'),
+    ('TG-013', '123456789023', 'repeat', 'D003'),
+    ('TG-014', '123456789024', 'Active', 'D001'),
+    ('TG-015', '123456789025', 'Active', 'D001'),
+    ('TG-016', '12345678902V', 'Active', 'D001'),
+    ('TG-017', '123456789027', 'suspended', 'D002'),
+    ('TG-018', '123456789028', 'suspended', 'D002'),
+    ('TG-019', '123456789029', 'Active', 'D002'),
+    ('TG-020', '12345678903V', 'Active', 'D002');
+
+INSERT INTO Lecture VALUES
+    ('LC01', '12345678111V', 'Lecture', 'D001'),  
+    ('LC02', '12345678112V', 'professor', 'D001'), 
+    ('LC03', '12345678113V', 'Lecture', 'D001'), 
+    ('LC04', '12345678114V', 'professor', 'D001'), 
+    ('LC05', '12345678115V', 'Lecture', 'D001'), 
+    ('LC06', '12345678116V', 'Assistant Lecturer', 'D002'),
+    ('LC07', '12345678117V', 'Lecture', 'D004'), 
+    ('LC08', '12345678118V', 'Lecture', 'D004'), 
+    ('LC09', '12345678119V', 'Senior Lecturer', 'D004'), 
+    ('LC10', '12345678101V', 'Lecturer', 'D003'); 
+
+INSERT INTO Course VALUES
+    ('ICT1233', 'Server Side Web Development', 3, 45, 'GPA', 'D001'),
+    ('ICT1213', 'Descrete Mathamatics', 3, 60, 'GPA', 'D001'),
+    ('ICT1253', 'Computer Networkig', 3, 45, 'GPA', 'D001'),
+    ('ICT1242', 'Computer Architecher', 2, 45, 'GPA', 'D001'),
+    ('ICT1212', 'DBMS', 2, 45, 'GPA', 'D001'),
+    ('ICT1222', 'DBMS practicum', 2, 45, 'GPA', 'D001'),
+
+    ('TMS2022', 'Physics', 4, 60, 'GPA', 'D002'),
+    ('TMS4302', 'Calculus', 3, 45, 'GPA', 'D002'),
+    ('TMS6301', 'Wrokshop', 3, 45, 'GPA', 'D002'),
+    ('TMS6302', 'Electricity and Magnatisam', 3, 45, 'GPA', 'D002'),
+    ('TMS7302', 'Activeties Of Matters', 3, 45, 'GPA', 'D002'),
+
+    ('BST4024', 'Fisheries', 3, 45, 'GPA', 'D003'),
+    ('BST3021', 'Micro Biology', 3, 45, 'GPA', 'D003'),
+    ('BST2343', 'Genetics', 3, 45, 'GPA', 'D003'),
+    ('BST2331', 'Electronic', 3, 45, 'GPA', 'D003'),
+
+    ('TCS1212', 'Fundamentals of Management',2,'45','GPA','D004'),
+    ('ENG1212', 'English', 2, 45, 'Non GPA', 'D004');
+
+INSERT Medical VALUES
+    ('MD001','sick','2025-08-05','2025-08-06','TG-004','TO001'),
+    ('MD002','sick','2025-08-05','2025-08-05','TG-015','TO001'),
+    ('MD003','sick','2025-08-05','2025-08-07','TG-011','TO001'),
+    ('MD004','sick','2025-08-07','2025-08-14','TG-005','TO001'),
+    ('MD005','sick','2025-08-15','2025-08-16','TG-014','TO001'),
+    ('MD006','sick','2025-08-16','2025-08-22','TG-016','TO001'),
+    ('MD007','sick','2025-08-22','2025-08-27','TG-011','TO001'),
+    ('MD008','sick','2025-08-28','2025-08-30','TG-002','TO001'),
+    ('MD009','sick','2025-08-30','2025-08-30','TG-007','TO001'),
+    ('MD010','sick','2025-08-30','2025-08-30','TG-019','TO001');
+
+
+
+
+INSERT Mark
+VALUES
+('M01', 0, 62, 48, 79, 67, 82, 44, 91, 'TG-001', 'ICT1233'),
+('M02', 61, 78, 40, 85, 74, 0, 39, 0, 'TG-001', 'ICT1213'),
+('M03', 71, 65, 49, 80, 66, 84, 36, 89, 'TG-001', 'ICT1253'),
+('M04', 0, 76, 38, 87, 64, 0, 45, 0, 'TG-001', 'ICT1242'),
+('M05', 69, 73, 43, 84, 70, 0, 45, 0, 'TG-001', 'ICT1212'),
+('M06', 63, 72, 37, 81, 0, 81, 40, 90, 'TG-001', 'ICT1222'),
+('M07', 64, 79, 35, 78, 73, 0, 32, 0, 'TG-001', 'TCS1212'),
+('M10', 66, 77, 42, 83, 69, 0, 41, 0, 'TG-001', 'ENG1212'),
+
+ ('M11', 72, 82, 91, 83, 30, 48, 95, 61, 'TG-002', 'ICT1233'),
+('M12', 74, 89, 92, 85, 34, 0, 93, 0, 'TG-002', 'ICT1213'),
+('M13', 76, 0, 94, 84, 36, 45, 92, 60, 'TG-002', 'ICT1253'),
+('M14', 73, 81, 93, 82, 31, 0, 96, 0, 'TG-002', 'ICT1242'),
+('M15', 75, 83, 90, 86, 33, 0, 91, 0, 'TG-002', 'ICT1212'),
+('M16', 77, 87, 95, 81, 0, 43, 94, 66, 'TG-002', 'ICT1222'),
+('M17', 71, 84, 89, 80, 35, 0, 90, 0, 'TG-002', 'TCS1212'),
+('M18', 0, 88, 97, 87, 38, 0, 98, 0, 'TG-002', 'ENG1212'),
+
+ ('M19', 0, 75, 95, 68, 46, 52, 33, 90, 'TG-003', 'ICT1233'),
+('M20', 40, 78, 97, 69, 49, 0, 36, 0, 'TG-003', 'ICT1213'),
+('M21', 43, 76, 98, 71, 47, 51, 34, 94, 'TG-003', 'ICT1253'),
+('M22', 41, 74, 96, 67, 48, 0, 37, 0, 'TG-003', 'ICT1242'),
+('M23', 44, 80, 99, 72, 0, 0, 39, 0, 'TG-003', 'ICT1212'),
+('M24', 45, 79, 95, 70, 0, 49, 38, 95, 'TG-003', 'ICT1222'),
+('M25', 42, 76, 94, 69, 45, 0, 35, 0, 'TG-003', 'TCS1212'),
+('M26', 39, 81, 97, 70, 0, 0, 59, 0, 'TG-003', 'ENG1212'),
+
+('M27', 40, 88, 60, 45, 0, 68, 0,0, 'TG-004', 'ICT1233'),
+('M28', 36, 90, 59, 49, 61, 0, 60, 0, 'TG-004', 'ICT1213'),
+('M29', 37, 87, 55, 48, 64, 70, 62, 82, 'TG-004', 'ICT1253'),
+('M30', 39, 86, 0, 50, 63, 0, 64, 0, 'TG-004', 'ICT1242'),
+('M31', 41, 90, 58, 46, 65, 0, 65, 0, 'TG-004', 'ICT1212'),
+('M32', 38, 85, 56, 47, 0, 70, 66, 84, 'TG-004', 'ICT1222'),
+('M33', 36, 89, 57, 44, 62, 0, 60, 0, 'TG-004', 'TCS1212'),
+('M34', 39, 88, 55, 45, 61, 0, 62, 0, 'TG-004', 'ENG1212'),
+ 
+ ('M35', 60, 72, 42, 47, 91, 80, 76, 68, 'TG-005', 'TMS2022'),
+('M36', 57, 71, 39, 44, 93, 79, 75, 72, 'TG-005', 'TMS4302'),
+('M37', 59, 69, 41, 46, 90, 82, 77, 71, 'TG-005', 'TMS6301'),
+('M38', 61, 73, 43, 48, 92, 78, 79, 69, 'TG-005', 'TMS6302'),
+('M39', 58, 70, 40, 50, 89, 81, 74, 73, 'TG-005', 'TMS7302'),
+('M40', 62, 74, 45, 49, 91, 83, 76, 67, 'TG-005', 'TCS1212'),
+('M41', 56, 68, 38, 43, 94, 80, 78, 75, 'TG-005', 'ENG1212'),
+
+ ('M42', 82, 86, 54, 68, 77, 93, 38, 53, 'TG-006', 'BST4024'),
+('M43', 79, 83, 50, 65, 76, 90, 40, 52, 'TG-006', 'BST3021'),
+('M44', 81, 85, 53, 67, 74, 89, 41, 50, 'TG-006', 'BST2343'),
+('M45', 78, 82, 51, 64, 73, 88, 37, 54, 'TG-006', 'BST2331'),
+('M46', 83, 87, 55, 69, 78, 92, 39, 55, 'TG-006', 'TCS1212'),
+('M47', 77, 81, 49, 63, 72, 86, 42, 48, 'TG-006', 'ENG1212'),
+
+ ('M48', 34, 95, 91, 75, 69, 85, 95, 82, 'TG-007', 'BST4024'),
+('M49', 30, 98, 92, 76, 70, 86, 96, 80, 'TG-007', 'BST3021'),
+('M50', 33, 97, 94, 78, 67, 88, 94, 83, 'TG-007', 'BST2343'),
+('M51', 31, 96, 90, 74, 68, 89, 93, 81, 'TG-007', 'BST2331'),
+('M52', 35, 100, 95, 79, 66, 87, 98, 85, 'TG-007', 'TCS1212'),
+('M53', 29, 99, 92, 73, 71, 84, 97, 78, 'TG-007', 'ENG1212'),
+
+ ('M54', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-008', 'ICT1233'),
+ ('M55', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-008', 'ICT1213'),
+ ('M56', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-008', 'ICT1253'),
+ ('M57', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-008', 'ICT1242'),
+ ('M58', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-008', 'ICT1212'),
+ ('M59', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-008', 'ICT1222'),
+ ('M60', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-008', 'TCS1212'),
+ ('M61', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-008', 'ENG1212'),
+
+ ('M62', 45, 38, 52, 61, 42, 58, 55, 48, 'TG-009', 'ICT1233'),
+('M63', 37, 36, 49, 57, 44, 0, 53, 0, 'TG-009', 'ICT1213'),
+('M64', 40, 35, 46, 54, 43, 61, 51, 49, 'TG-009', 'ICT1253'),
+('M65', 39, 34, 44, 55, 41, 0, 54, 0, 'TG-009', 'ICT1242'),
+('M66', 36, 33, 47, 56, 40, 0, 54, 0, 'TG-009', 'ICT1212'),
+('M67', 38, 30, 43, 56, 0, 62, 54, 52, 'TG-009', 'ICT1222'),
+('M68', 42, 32, 50, 60, 41, 0, 56, 0, 'TG-009', 'TCS1212'),
+('M69', 44, 31, 48, 58, 39, 0, 57, 0, 'TG-009', 'ENG1212'),
+
+ ('M70', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-010', 'ICT1233'),
+ ('M71', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-010', 'ICT1213'),
+ ('M72', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-010', 'ICT1253'),
+ ('M73', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-010', 'ICT1242'),
+ ('M74', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-010', 'ICT1212'),
+ ('M75', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-010', 'ICT1222'),
+ ('M76', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-010', 'TCS1212'),
+ ('M77', NULL, NUll, NUll, NULl, NULl, NULL, NULL, NULL,'TG-010', 'ENG1212'),
+
+ ('M78', 85, 41, 76, 32, 70, 48, 93, 51, 'TG-011', 'BST4024'),
+('M79', 90, 45, 82, 37, 68, 53, 97, 56, 'TG-011', 'BST3021'),
+('M80', 84, 44, 78, 30, 65, 49, 92, 55, 'TG-011', 'BST2343'),
+('M81', 87, 42, 75, 34, 67, 52, 94, 58, 'TG-011', 'BST2331'),
+('M82', 89, 47, 80, 36, 71, 50, 96, 53, 'TG-011', 'TCS1212'),
+('M83', 86, 46, 81, 39, 69, 51, 95, 57, 'TG-011', 'ENG1212'),
+
+ ('M84', 47, 61, 62, 72, 84, 66, 30, 55, 'TG-012', 'BST4024'),
+('M85', 43, 58, 57, 68, 88, 64, 31, 56, 'TG-012', 'BST3021'),
+('M86', 45, 60, 60, 70, 85, 63, 32, 58, 'TG-012', 'BST2343'),
+('M87', 46, 62, 61, 73, 82, 67, 35, 59, 'TG-012', 'BST2331'),
+('M88', 42, 57, 58, 67, 89, 68, 34, 54, 'TG-012', 'TCS1212'),
+('M89', 49, 64, 63, 75, 81, 69, 36, 60, 'TG-012', 'ENG1212'),
+
+('M90', 82, 50, 88, 58, 42, 93, 75, 0, 'TG-013', 'BST4024'),
+('M91', 85, 47, 91, 57, 45, 92, 72, 99, 'TG-013', 'BST3021'),
+('M92', 84, 49, 89, 55, 44, 95, 74, 98, 'TG-013', 'BST2343'),
+('M93', 81, 46, 87, 59, 41, 91, 70, 100, 'TG-013', 'BST2331'),
+('M94', 83, 48, 90, 56, 43, 92, 0, 97, 'TG-013', 'TCS1212'),
+('M95', 80, 50, 86, 60, 46, 90, 73, 95, 'TG-013', 'ENG1212'),
+
+('M96', 95, 80, 50, 70, 68, 97, 91, 30, 'TG-014', 'ICT1233'),
+('M97', 96, 78, 48, 73, 65, 0, 90, 0, 'TG-014', 'ICT1213'),
+('M98', 97, 75, 51, 71, 67, 95, 92, 34, 'TG-014', 'ICT1253'),
+('M99', 94, 76, 52, 74, 66, 0, 89, 0, 'TG-014', 'ICT1242'),
+('M100', 92, 79, 50, 75, 70, 0, 88, 0, 'TG-014', 'ICT1212'),
+('M101', 93, 77, 49, 72, 0, 100, 93, 35, 'TG-014', 'ICT1222'),
+('M102', 91, 74, 53, 70, 68, 0, 87, 0, 'TG-014', 'TCS1212'),
+('M103', 99, 81, 47, 71, 65, 0, 90, 0, 'TG-014', 'ENG1212'),
+
+('M104', 29, 35, 91, 37, 97, 42, 36, 51, 'TG-015', 'ICT1233'),
+('M105', 32, 33, 90, 36, 99, 0, 35, 0, 'TG-015', 'ICT1213'),
+('M106', 30, 36, 93, 35, 96, 43, 33, 49, 'TG-015', 'ICT1253'),
+('M107', 33, 34, 92, 38, 95, 0, 34, 0, 'TG-015', 'ICT1242'),
+('M108', 31, 34, 92, 36, 98, 0, 35, 0, 'TG-015', 'ICT1212'),
+('M109', 30, 34, 92, 36, 0, 40, 34, 50, 'TG-015', 'ICT1222'),
+('M110', 31, 36, 91, 36, 97, 0, 34, 0, 'TG-015', 'TCS1212'),
+('M111', 30, 34, 92, 37, 98, 0, 35, 0, 'TG-015', 'ENG1212'),
+
+('M112', 55, 46, 52, 47, 38, 51, 33, 47, 'TG-016', 'ICT1233'),
+('M113', 53, 44, 50, 49, 36, 0, 31, 0, 'TG-016', 'ICT1213'),
+('M114', 54, 45, 51, 48, 37, 50, 32, 46, 'TG-016', 'ICT1253'),
+('M115', 56, 48, 53, 50, 39, 0, 34, 0, 'TG-016', 'ICT1242'),
+('M116', 55, 45, 50, 47, 38, 0, 32, 0, 'TG-016', 'ICT1212'),
+('M117', 54, 46, 51, 48, 0, 50, 32, 46, 'TG-016', 'ICT1222'),
+('M118', 54, 45, 51, 48, 37, 0, 32, 0, 'TG-016', 'TCS1212'),
+('M119', 53, 45, 51, 48, 37, 0, 32, 0, 'TG-016', 'ENG1212'),
+
+('M120', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TG-017', 'TMS2022'),
+('M121', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TG-017', 'TMS4302'),
+('M122', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TG-017', 'TMS6301'),
+('M123', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TG-017', 'TMS6302'),
+('M124', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TG-017', 'TMS7302'),
+('M125', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TG-017', 'TCS1212'),
+('M126', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TG-017', 'ENG1212'),
+
+('M127', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TG-018', 'TMS2022'),
+('M128', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TG-018', 'TMS4302'),
+('M129', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TG-018', 'TMS6301'),
+('M130', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TG-018', 'TMS6302'),
+('M131', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TG-018', 'TMS7302'),
+('M132', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TG-018', 'TCS1212'),
+('M133', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'TG-018', 'ENG1212'),
+
+('M134', 61, 76, 45, 72, 80, 45, 69, 34, 'TG-019', 'TMS2022'),
+('M135', 59, 74, 43, 70, 78, 43, 67, 32, 'TG-019', 'TMS4302'),
+('M136', 60, 75, 44, 71, 79, 44, 68, 33, 'TG-019', 'TMS6301'),
+('M137', 62, 77, 46, 73, 81, 46, 70, 35, 'TG-019', 'TMS6302'),
+('M138', 58, 74, 43, 69, 77, 43, 67, 31, 'TG-019', 'TMS7302'),
+('M139', 60, 75, 44, 71, 79, 44, 68, 33, 'TG-019', 'TCS1212'),
+('M140', 59, 76, 43, 70, 78, 43, 67, 32, 'TG-019', 'ENG1212'),
+
+('M141', 48, 53, 90, 98, 99, 89, 66, 34, 'TG-020', 'TMS2022'),
+('M142', 47, 52, 89, 99, 98, 88, 65, 33, 'TG-020', 'TMS4302'),
+('M143', 47, 52, 89, 99, 98, 88, 65, 33, 'TG-020', 'TMS6301'),
+('M144', 47, 52, 89, 99, 98, 0, 65, 33, 'TG-020', 'TMS6302'),
+('M145', 49, 54, 91, 99, 98, 88, 65, 34, 'TG-020', 'TMS7302'),
+('M146', 47, 52, 89, 99, 98, 88, 65, 33, 'TG-020', 'TCS1212'),
+('M147', 47, 52, 89, 99, 98, 88, 66, 0, 'TG-020', 'ENG1212');
+
+INSERT Student_Course VALUES  
+    ('TG-001','ICT1233'),
+    ('TG-001','ICT1213'),
+    ('TG-001','ICT1253'),
+    ('TG-001','ICT1242'),
+    ('TG-001','ICT1212'),
+    ('TG-001','ICT1222'),
+    ('TG-001','TCS1212'),
+    ('TG-001','ENG1212'),
+    ('TG-002','ICT1233'),
+    ('TG-002','ICT1213'),
+    ('TG-002','ICT1253'),
+    ('TG-002','ICT1242'),
+    ('TG-002','ICT1212'),
+    ('TG-002','ICT1222'),
+    ('TG-002','TCS1212'),
+    ('TG-002','ENG1212'),
+    ('TG-003','ICT1233'),
+    ('TG-003','ICT1213'),
+    ('TG-003','ICT1253'),
+    ('TG-003','ICT1242'),
+    ('TG-003','ICT1212'),
+    ('TG-003','ICT1222'),
+    ('TG-003','TCS1212'),
+    ('TG-003','ENG1212'),
+    ('TG-004','ICT1233'),
+    ('TG-004','ICT1213'),
+    ('TG-004','ICT1253'),
+    ('TG-004','ICT1242'),
+    ('TG-004','ICT1212'),
+    ('TG-004','ICT1222'),
+    ('TG-004','TCS1212'),
+    ('TG-004','ENG1212'),
+    ('TG-005','TMS2022'),
+    ('TG-005','TMS4302'),
+    ('TG-005','TMS6301'),
+    ('TG-005','TMS6302'),
+    ('TG-005','TMS2022'),
+    ('TG-005','TCS1212'),
+    ('TG-005','ENG1212'),
+    ('TG-006','BST3021'),
+    ('TG-006','BST2343'),
+    ('TG-006','BST2331'),
+    ('TG-006','TCS1212'),
+    ('TG-006','ENG1212'),
+    ('TG-007','BST3021'),
+    ('TG-007','BST2343'),
+    ('TG-007','BST2331'),
+    ('TG-007','TCS1212'),
+    ('TG-007','ENG1212'),
+    ('TG-008','ICT1233'),
+    ('TG-008','ICT1213'),
+    ('TG-008','ICT1253'),
+    ('TG-008','ICT1242'),
+    ('TG-008','ICT1212'),
+    ('TG-008','ICT1222'),
+    ('TG-008','TCS1212'),
+    ('TG-008','ENG1212'),
+    ('TG-009','ICT1233'),
+    ('TG-009','ICT1213'),
+    ('TG-009','ICT1253'),
+    ('TG-009','ICT1242'),
+    ('TG-009','ICT1212'),
+    ('TG-009','ICT1222'),
+    ('TG-009','TCS1212'),
+    ('TG-009','ENG1212'),
+    ('TG-010','ICT1233'),
+    ('TG-010','ICT1213'),
+    ('TG-010','ICT1253'),
+    ('TG-010','ICT1242'),
+    ('TG-010','ICT1212'),
+    ('TG-010','ICT1222'),
+    ('TG-010','TCS1212'),
+    ('TG-010','ENG1212'),
+    ('TG-011','BST3021'),
+    ('TG-011','BST2343'),
+    ('TG-011','BST2331'),
+    ('TG-011','TCS1212'),
+    ('TG-011','ENG1212'),
+    ('TG-012','BST3021'),
+    ('TG-012','BST2343'),
+    ('TG-012','BST2331'),
+    ('TG-012','TCS1212'),
+    ('TG-012','ENG1212'),
+    ('TG-013','BST3021'),
+    ('TG-013','BST2343'),
+    ('TG-013','BST2331'),
+    ('TG-013','TCS1212'),
+    ('TG-013','ENG1212'),
+    ('TG-014','ICT1233'),
+    ('TG-014','ICT1213'),
+    ('TG-014','ICT1253'),
+    ('TG-014','ICT1242'),
+    ('TG-014','ICT1212'),
+    ('TG-014','ICT1222'),
+    ('TG-014','TCS1212'),
+    ('TG-014','ENG1212'),
+    ('TG-015','ICT1233'),
+    ('TG-015','ICT1213'),
+    ('TG-015','ICT1253'),
+    ('TG-015','ICT1242'),
+    ('TG-015','ICT1212'),
+    ('TG-015','ICT1222'),
+    ('TG-015','TCS1212'),
+    ('TG-015','ENG1212'),
+    ('TG-016','ICT1233'),
+    ('TG-016','ICT1213'),
+    ('TG-016','ICT1253'),
+    ('TG-016','ICT1242'),
+    ('TG-016','ICT1212'),
+    ('TG-016','ICT1222'),
+    ('TG-016','TCS1212'),
+    ('TG-016','ENG1212'),
+    ('TG-017','TMS2022'),
+    ('TG-017','TMS4302'),
+    ('TG-017','TMS6301'),
+    ('TG-017','TMS6302'),
+    ('TG-017','TMS2022'),
+    ('TG-017','TCS1212'),
+    ('TG-017','ENG1212'),
+    ('TG-018','TMS2022'),
+    ('TG-018','TMS4302'),
+    ('TG-018','TMS6301'),
+    ('TG-018','TMS6302'),
+    ('TG-018','TMS2022'),
+    ('TG-018','TCS1212'),
+    ('TG-018','ENG1212'),
+    ('TG-019','TMS2022'),
+    ('TG-019','TMS4302'),
+    ('TG-019','TMS6301'),
+    ('TG-019','TMS6302'),
+    ('TG-019','TMS2022'),
+    ('TG-019','TCS1212'),
+    ('TG-019','ENG1212'),
+    ('TG-020','TMS2022'),
+    ('TG-020','TMS4302'),
+    ('TG-020','TMS6301'),
+    ('TG-020','TMS6302'),
+    ('TG-020','TMS2022'),
+    ('TG-020','TCS1212'),
+    ('TG-020','ENG1212');
+
+INSERT INTO Lecture_Course VALUES
+    ('LC01','ICT1233'),
+    ('LC02','ICT1213'),
+    ('LC03','ICT1213'),
+    ('LC04','ICT1242'),
+    ('LC05','ICT1212'),
+    ('LC05','ICT1222'),
+    ('LC06','TMS2022'),
+    ('LC06','TMS4302'),
+    ('LC07','ENG1212'),
+    ('LC08','ENG1212'),
+    ('LC09','TCS1212'),
+    ('LC10','BST4024');
+
+
+INSERT INTO Attendence VALUES
+    ('2025-08-05', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-05', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-05', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-05', 'Absent', 'Lecture', 'TG-004', 'MD001', 'TO001', 'ICT1233'),
+    ('2025-08-05', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-05', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-05', 'Absent', 'Lecture', 'TG-015', 'MD002', 'TO001', 'ICT1233'),
+    ('2025-08-05', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233'),
+
+    ('2025-08-06', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-06', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-06', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-06', 'Absent', 'Lecture', 'TG-004', 'MD001', 'TO001', 'ICT1212'),
+    ('2025-08-06', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-06', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-06', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-06', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-06', 'Present', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-06', 'Present', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-06', 'Present', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-06', 'Absent', 'Practical', 'TG-004', 'MD001', 'TO001', 'ICT1222'),    
+    ('2025-08-06', 'Present', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'),   
+    ('2025-08-06', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-06', 'Present', 'Practical', 'TG-015', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-06', 'Present', 'Practical', 'TG-016', NULL, 'TO001', 'ICT1222'),
+
+    ('2025-08-07', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-07', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-07', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-07', 'Absent', 'Lecture', 'TG-004', 'MD001', 'TO001', 'ICT1213'),
+    ('2025-08-07', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-07', 'Absent', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-07', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-07', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1213'),
+
+    ('2025-08-08', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-08', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-08', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-08', 'Absent', 'Lecture', 'TG-004', 'MD001', 'TO001', 'ICT1242'),
+    ('2025-08-08', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-08', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-08', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-08', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-08', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-08', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-08', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-08', 'Absent', 'Lecture', 'TG-004', 'MD001', 'TO001', 'ICT1253'),
+    ('2025-08-08', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-08', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-08', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-08', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1253'),
+
+    ('2025-08-09', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-09', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-09', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-09', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-09', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-09', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-09', 'Absent', 'Lecture', 'TG-015', 'MD003', 'TO001', 'ENG1212'),
+    ('2025-08-09', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-09', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-09', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-09', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-09', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-09', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-09', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-09', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-09', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'TCS1212'),
+
+    ('2025-08-12', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-12', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-12', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-12', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-12', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-12', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-12', 'Absent', 'Lecture', 'TG-015','MD003', 'TO001', 'ICT1233'),
+    ('2025-08-12', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233'),
+
+    ('2025-08-13', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-13', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-13', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-13', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-13', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-13', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-13', 'Absent', 'Lecture', 'TG-015', 'MD003', 'TO001', 'ICT1212'),
+    ('2025-08-13', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-13', 'Present', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-13', 'Present', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-13', 'Present', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-13', 'Present', 'Practical', 'TG-004', NULL, 'TO001', 'ICT1222'),   
+    ('2025-08-13', 'Present', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'),  
+    ('2025-08-13', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-13', 'Absent', 'Practical', 'TG-015','MD003', 'TO001', 'ICT1222'),
+    ('2025-08-13', 'Present', 'Practical', 'TG-016', NULL, 'TO001', 'ICT1222'),
+
+    ('2025-08-14', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-14', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-14', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-14', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-14', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-14', 'Absent', 'Lecture', 'TG-014', 'MD005', 'TO001', 'ICT1213'),
+    ('2025-08-14', 'Absent', 'Lecture', 'TG-015', 'MD003', 'TO001', 'ICT1213'),
+    ('2025-08-14', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1213'), 
+
+    ('2025-08-15', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-15', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-15', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-15', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-15', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-15', 'Absent', 'Lecture', 'TG-014', 'MD005', 'TO001', 'ICT1242'),
+    ('2025-08-15', 'Absent', 'Lecture', 'TG-015', 'MD003', 'TO001', 'ICT1242'),
+    ('2025-08-15', 'Present', 'Lecture', 'TG-016','MD006', 'TO001', 'ICT1242'),
+    ('2025-08-15', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-15', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-15', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-15', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-15', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-15', 'Absent', 'Lecture', 'TG-014', 'MD005', 'TO001', 'ICT1253'),
+    ('2025-08-15', 'Absent', 'Lecture', 'TG-015', 'MD003', 'TO001', 'ICT1253'),
+    ('2025-08-15', 'Absent', 'Lecture', 'TG-016', 'MD006', 'TO001', 'ICT1253'),
+
+    ('2025-08-16', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-16', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-16', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-16', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-16', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'), 
+    ('2025-08-16', 'Absent', 'Lecture', 'TG-014', 'MD005', 'TO001', 'ENG1212'),
+    ('2025-08-16', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-16', 'Absent', 'Lecture', 'TG-016', 'MD006', 'TO001', 'ENG1212'),
+    ('2025-08-16', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-16', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-16', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-16', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-16', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-16', 'Absent', 'Lecture', 'TG-014', 'MD005', 'TO001', 'TCS1212'),
+    ('2025-08-16', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-16', 'Absent', 'Lecture', 'TG-016', 'MD006', 'TO001', 'TCS1212'),
+
+    ('2025-08-20', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-20', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-20', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-20', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-20', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-20', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-20', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-20', 'Absent', 'Lecture', 'TG-016', 'MD006', 'TO001', 'ICT1212'),
+    ('2025-08-20', 'Present', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-20', 'Present', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-20', 'Present', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-20', 'Present', 'Practical', 'TG-004', NULL, 'TO001', 'ICT1222'),   
+    ('2025-08-20', 'Present', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'),   
+    ('2025-08-20', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-20', 'Present', 'Practical', 'TG-015', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-20', 'Absent', 'Lecture', 'TG-016', 'MD006', 'TO001', 'ICT1222'),
+
+    ('2025-08-21', 'Absent', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-21', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-21', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-21', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-21', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-21', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-21', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-21', 'Absent', 'Lecture', 'TG-016', 'MD006', 'TO001', 'ICT1213'),
+
+    ('2025-08-22', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-22', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-22', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-22', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-22', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-22', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-22', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-22', 'Absent', 'Lecture', 'TG-016', 'MD006', 'TO001', 'ICT1242'),
+    ('2025-08-22', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-22', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-22', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-22', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-22', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-22', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-22', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-22', 'Absent', 'Lecture', 'TG-016', 'MD006', 'TO001', 'ICT1253'),
+
+    ('2025-08-23', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-23', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'TCS1212'),
+
+    ('2025-08-26', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-26', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-26', 'Absent', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-26', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-26', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-26', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-26', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1233'),
+    ('2025-08-26', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233'),
+
+    ('2025-08-27', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-27', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-27', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-27', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-27', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-27', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-27', 'Absent', 'Lecture', 'TG-015', 'MD004', 'TO001', 'ICT1212'),
+    ('2025-08-27', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1212'),
+    ('2025-08-27', 'Present', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-27', 'Present', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-27', 'Present', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-08-27', 'Present', 'Practical', 'TG-004', NULL, 'TO001', 'ICT1222'),  
+    ('2025-08-27', 'Present', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'), 
+    ('2025-08-27', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'), 
+    ('2025-08-27', 'Absent', 'Practical', 'TG-015', 'MD004', 'TO001', 'ICT1222'),
+    ('2025-08-27', 'Present', 'Practical', 'TG-016', NULL, 'TO001', 'ICT1222'),
+
+    ('2025-08-28', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-28', 'Absent', 'Lecture', 'TG-002', 'MD008', 'TO001', 'ICT1213'),
+    ('2025-08-28', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-28', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-28', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-28', 'Absent', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1213'), 
+    ('2025-08-28', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1213'),
+    ('2025-08-28', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1213'),   
+
+    ('2025-08-29', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-29', 'Absent', 'Lecture', 'TG-002', 'MD008', 'TO001', 'ICT1242'),
+    ('2025-08-29', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-29', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-29', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-29', 'Absent', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-29', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-29', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1242'),
+    ('2025-08-29', 'Absent', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-29', 'Absent', 'Lecture', 'TG-002', 'MD008', 'TO001', 'ICT1253'),
+    ('2025-08-29', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-29', 'Absent', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-29', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-29', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-29', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1253'),
+    ('2025-08-29', 'Absent', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1253'),
+
+    ('2025-08-30', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-30', 'Absent', 'Lecture', 'TG-002', 'MD008', 'TO001', 'ENG1212'),
+    ('2025-08-30', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-30', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-30', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-30', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-30', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-30', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ENG1212'),
+    ('2025-08-30', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-30', 'Absent', 'Lecture', 'TG-002', 'MD008', 'TO001', 'TCS1212'),
+    ('2025-08-30', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-30', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-30', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'), 
+    ('2025-08-30', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-30', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-08-30', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'TCS1212'),
+
+    ('2025-09-02', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-02', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-02', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-02', 'Absent', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-02', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-02', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-02', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-02', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233'),
+
+    ('2025-09-03', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-03', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-03', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-03', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-03', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-03', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-03', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-03', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-03', 'Present', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-03', 'Present', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-03', 'Present', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-03', 'Present', 'Practical', 'TG-004', NULL, 'TO001', 'ICT1222'),    
+    ('2025-09-03', 'Present', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'),   
+    ('2025-09-03', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-03', 'Present', 'Practical', 'TG-015', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-03', 'Present', 'Practical', 'TG-016', NULL, 'TO001', 'ICT1222'),
+
+    ('2025-09-04', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-04', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-04', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-04', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-04', 'Absent', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-04', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-04', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-04', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1213'),
+
+    ('2025-09-05', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-05', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-05', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-05', 'Absent', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-05', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-05', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-05', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-05', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-05', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-05', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-05', 'Absent', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-05', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-05', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-05', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-05', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-05', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1253'),
+
+    ('2025-09-06', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-06', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'TCS1212'),
+
+    ('2025-09-09', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-09', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-09', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-09', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-09', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-09', 'Absent', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-09', 'Absent', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-09', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233'),
+
+    ('2025-09-10', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-10', 'Absent', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-10', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-10', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-10', 'Absent', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-10', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-10', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-10', 'Absent', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-10', 'Present', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-10', 'Absent', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-10', 'Present', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-10', 'Present', 'Practical', 'TG-004', NULL, 'TO001', 'ICT1222'),   
+    ('2025-09-10', 'Absent', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'),  
+    ('2025-09-10', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-10', 'Present', 'Practical', 'TG-015', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-10', 'Absent', 'Practical', 'TG-016', NULL, 'TO001', 'ICT1222'),
+
+    ('2025-09-11', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-11', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-11', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-11', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-11', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-11', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-11', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-11', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1213'), 
+
+    ('2025-09-12', 'Absent', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-12', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-12', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-12', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-12', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-12', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-12', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-12', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-12', 'Absent', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-12', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-12', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-12', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-12', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-12', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-12', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-12', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1253'),
+
+    ('2025-09-13', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-13', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-13', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-13', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-13', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'), 
+    ('2025-09-13', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-13', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-13', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-13', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-13', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-13', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-13', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-13', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-13', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-13', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-13', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'TCS1212'),
+
+    ('2025-09-16', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-16', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-16', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-16', 'Absent', 'Lecture', 'TG-004', 'MD009', 'TO001', 'ICT1233'),
+    ('2025-09-16', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-16', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-16', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-16', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233'),
+
+    ('2025-09-17', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-17', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-17', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-17', 'Absent', 'Lecture', 'TG-004', 'MD009', 'TO001', 'ICT1212'),
+    ('2025-09-17', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-17', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-17', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-17', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-17', 'Present', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-17', 'Present', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-17', 'Present', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-17', 'Absent', 'Practical', 'TG-004', 'MD009', 'TO001', 'ICT1222'),   
+    ('2025-09-17', 'Present', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'),  
+    ('2025-09-17', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-17', 'Present', 'Practical', 'TG-015', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-17', 'Present', 'Practical', 'TG-016', NULL, 'TO001', 'ICT1222'),
+
+    ('2025-09-18', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-18', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-18', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-18', 'Absent', 'Lecture', 'TG-004', 'MD009', 'TO001', 'ICT1213'),
+    ('2025-09-18', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-18', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-18', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-18', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1213'),
+
+    ('2025-09-19', 'Absent', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-19', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-19', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-19', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-19', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-19', 'Absent', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-19', 'Absent', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-19', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-19', 'Absent', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-19', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-19', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-19', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-19', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-19', 'Absent', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-19', 'Absent', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-19', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1253'),
+
+    ('2025-09-20', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-20', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-20', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-20', 'Absent', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-20', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-20', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-20', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-20', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-20', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-20', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-20', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-20', 'Absent', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-20', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-20', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-20', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-20', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'TCS1212'),
+
+    ('2025-09-23', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-23', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-23', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-23', 'Present', 'Lecture', 'TG-004', 'MD010', 'TO001', 'ICT1233'),
+    ('2025-09-23', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-23', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-23', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-23', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233'),
+
+    ('2025-09-24', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-24', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-24', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-24', 'Absent', 'Lecture', 'TG-004', 'MD010', 'TO001', 'ICT1212'),
+    ('2025-09-24', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-24', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-24', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-24', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1212'),
+    ('2025-09-24', 'Present', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-24', 'Present', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-24', 'Present', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-24', 'Absent', 'Practical', 'TG-004', 'MD010', 'TO001', 'ICT1222'),  
+    ('2025-09-24', 'Present', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'), 
+    ('2025-09-24', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'), 
+    ('2025-09-24', 'Present', 'Practical', 'TG-015', NULL, 'TO001', 'ICT1222'),
+    ('2025-09-24', 'Present', 'Practical', 'TG-016', NULL, 'TO001', 'ICT1222'),
+
+    ('2025-09-25', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-25', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-25', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-25', 'Absent', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-25', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-25', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1213'), 
+    ('2025-09-25', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1213'),
+    ('2025-09-25', 'Absent', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1213'),   
+
+    ('2025-09-26', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-26', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-26', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-26', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-26', 'Absent', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-26', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-26', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-26', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1242'),
+    ('2025-09-26', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-26', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-26', 'Absent', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-26', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-26', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-26', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-26', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1253'),
+    ('2025-09-26', 'Absent', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1253'),
+
+    ('2025-09-27', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-27', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-27', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-27', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-27', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-27', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-27', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-27', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ENG1212'),
+    ('2025-09-27', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-27', 'Absent', 'Lecture', 'TG-002', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-27', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-27', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-27', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'), 
+    ('2025-09-27', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-27', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-09-27', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'TCS1212'),
+
+    ('2025-09-30', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-30', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-30', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-30', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-30', 'Absent', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-30', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-30', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1233'),
+    ('2025-09-30', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233'),
+
+    ('2025-10-01', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-01', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-01', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-01', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-01', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-01', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-01', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-01', 'Absent', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-01', 'Present', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-01', 'Present', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-01', 'Present', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-01', 'Present', 'Practical', 'TG-004', NULL, 'TO001', 'ICT1222'),    
+    ('2025-10-01', 'Present', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-01', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-01', 'Present', 'Practical', 'TG-015', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-01', 'Absent', 'Practical', 'TG-016', NULL, 'TO001', 'ICT1222'),
+
+    ('2025-10-02', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-02', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-02', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-02', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-02', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-02', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-02', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-02', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1213'),
+
+    ('2025-10-03', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-03', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1253'),
+
+
+    ('2025-10-04', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-04', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'TCS1212'),
+
+    ('2025-10-07', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-07', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-07', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-07', 'Absent', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-07', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-07', 'Absent', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-07', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-07', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233'),
+
+    ('2025-10-08', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-08', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-08', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-08', 'Absent', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-08', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-08', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-08', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-08', 'Absent', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-08', 'Present', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-08', 'Present', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-08', 'Present', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-08', 'Absent', 'Practical', 'TG-004', NULL, 'TO001', 'ICT1222'),   
+    ('2025-10-08', 'Present', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'),  
+    ('2025-10-08', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-08', 'Present', 'Practical', 'TG-015', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-08', 'Absent', 'Practical', 'TG-016', NULL, 'TO001', 'ICT1222'),
+
+    ('2025-10-09', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-09', 'Absent', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-09', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-09', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-09', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-09', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-09', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-09', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1213'), 
+
+    ('2025-10-10', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-10', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-10', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-10', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-10', 'Absent', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-10', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-10', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-10', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-10', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-10', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-10', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-10', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-10', 'Absent', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-10', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-10', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-10', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1253'),
+
+    ('2025-10-11', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-11', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-11', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-11', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-11', 'Absent', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'), 
+    ('2025-10-11', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-11', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-11', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-11', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-11', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-11', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-11', 'Absent', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-11', 'Absent', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-11', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-11', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-11', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'TCS1212'),
+
+    ('2025-10-14', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-14', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-14', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-14', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-14', 'Absent', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-14', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-14', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-14', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233'),
+
+    ('2025-10-15', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-15', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-15', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-15', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-15', 'Absent', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-15', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-15', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-15', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-15', 'Present', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-15', 'Present', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-15', 'Present', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-15', 'Present', 'Practical', 'TG-004', NULL, 'TO001', 'ICT1222'),   
+    ('2025-10-15', 'Absent', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'),  
+    ('2025-10-15', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-15', 'Present', 'Practical', 'TG-015', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-15', 'Present', 'Practical', 'TG-016', NULL, 'TO001', 'ICT1222'),
+
+    ('2025-10-16', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-16', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-16', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-16', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-16', 'Absent', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-16', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-16', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-16', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1213'),
+
+    ('2025-10-17', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-17', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1253'),
+
+    ('2025-10-18', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-18', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-18', 'Absent', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-18', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-18', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-18', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-18', 'Absent', 'Lecture', 'TG-015', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-18', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-18', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-18', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-18', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-18', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-18', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-18', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-18', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-18', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'TCS1212'),
+
+    ('2025-10-21', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-21', 'Absent', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-21', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-21', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-21', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-21', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-21', 'Absent', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-21', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233'),
+
+    ('2025-10-22', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-22', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-22', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-22', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-22', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-22', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-22', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-22', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-22', 'Present', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-22', 'Present', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-22', 'Present', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-22', 'Present', 'Practical', 'TG-004', NULL, 'TO001', 'ICT1222'),  
+    ('2025-10-22', 'Present', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'), 
+    ('2025-10-22', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'), 
+    ('2025-10-22', 'Present', 'Practical', 'TG-015', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-22', 'Present', 'Practical', 'TG-016', NULL, 'TO001', 'ICT1222'),
+
+    ('2025-10-23', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-23', 'Absent', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-23', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-23', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-23', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-23', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1213'), 
+    ('2025-10-23', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-23', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1213'),   
+
+    ('2025-10-24', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-24', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-24', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-24', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-24', 'Absent', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-24', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-24', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-24', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-24', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-24', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-24', 'Absent', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-24', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-24', 'Absent', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-24', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-24', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-24', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1253'),
+
+    ('2025-10-25', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-25', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-25', 'Absent', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-25', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-25', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-25', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-25', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-25', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ENG1212'),
+    ('2025-10-25', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-25', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-25', 'Absent', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-25', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-25', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'), 
+    ('2025-10-25', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-25', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-10-25', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'TCS1212'),
+ 
+    ('2025-10-28', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-28', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-28', 'Absent', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-28', 'Absent', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-28', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-28', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-28', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1233'),
+    ('2025-10-28', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233'),
+
+    ('2025-10-29', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-29', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-29', 'Absent', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-29', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-29', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-29', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-29', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-29', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1212'),
+    ('2025-10-29', 'Present', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-29', 'Present', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-29', 'Absent', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-29', 'Present', 'Practical', 'TG-004', NULL, 'TO001', 'ICT1222'),    
+    ('2025-10-29', 'Present', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-29', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-29', 'Present', 'Practical', 'TG-015', NULL, 'TO001', 'ICT1222'),
+    ('2025-10-29', 'Present', 'Practical', 'TG-016', NULL, 'TO001', 'ICT1222'),
+
+    ('2025-10-30', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-30', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-30', 'Absent', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-30', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-30', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-30', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-30', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1213'),
+    ('2025-10-30', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1213'),
+
+    ('2025-10-31', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-31', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-31', 'Absent', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-31', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-31', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-31', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-31', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-31', 'Absent', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1242'),
+    ('2025-10-31', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-31', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-31', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-31', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-31', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-31', 'Absent', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-31', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1253'),
+    ('2025-10-31', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1253'),
+
+    ('2025-11-01', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-01', 'Absent', 'Lecture', 'TG-002', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-01', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-01', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-01', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-01', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-01', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-01', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-01', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-01', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-01', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-01', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-01', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-01', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-01', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-01', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'TCS1212'),
+
+    ('2025-11-04', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-04', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-04', 'Absent', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-04', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-04', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-04', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-04', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-04', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233'),
+
+    ('2025-11-05', 'Absent', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-05', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-05', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-05', 'Absent', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-05', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-05', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-05', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-05', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-05', 'Absent', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-11-05', 'Present', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-11-05', 'Present', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-11-05', 'Absent', 'Practical', 'TG-004', NULL, 'TO001', 'ICT1222'),   
+    ('2025-11-05', 'Present', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'),  
+    ('2025-11-05', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'),
+    ('2025-11-05', 'Present', 'Practical', 'TG-015', NULL, 'TO001', 'ICT1222'),
+    ('2025-11-05', 'Present', 'Practical', 'TG-016', NULL, 'TO001', 'ICT1222'),
+
+    ('2025-11-06', 'Absent', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-11-06', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1213'),
+    ('2025-11-06', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-11-06', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1213'),
+    ('2025-11-06', 'Absent', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-11-06', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1213'),
+    ('2025-11-06', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1213'),
+    ('2025-11-06', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1213'), 
+
+    ('2025-11-07', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-07', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-07', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-07', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-07', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-07', 'Absent', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-07', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-07', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-07', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-11-07', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1253'),
+    ('2025-11-07', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-11-07', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1253'),
+    ('2025-11-07', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-11-07', 'Absent', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1253'),
+    ('2025-11-07', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1253'),
+    ('2025-11-07', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1253'),
+
+    ('2025-11-08', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-08', 'Absent', 'Lecture', 'TG-002', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-08', 'Absent', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-08', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-08', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'), 
+    ('2025-11-08', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-08', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-08', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-08', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-08', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-08', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-08', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-08', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-08', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-08', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-08', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'TCS1212'),
+
+    ('2025-11-11', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-11', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-11', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-11', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-11', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-11', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-11', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-11', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233'),
+
+    ('2025-11-12', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-12', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-12', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-12', 'Absent', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-12', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-12', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-12', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-12', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1212'),
+    ('2025-11-12', 'Present', 'Practical', 'TG-001', NULL, 'TO001', 'ICT1222'),
+    ('2025-11-12', 'Present', 'Practical', 'TG-002', NULL, 'TO001', 'ICT1222'),
+    ('2025-11-12', 'Present', 'Practical', 'TG-003', NULL, 'TO001', 'ICT1222'),
+    ('2025-11-12', 'Absent', 'Practical', 'TG-004', NULL, 'TO001', 'ICT1222'),   
+    ('2025-11-12', 'Present', 'Practical', 'TG-009', NULL, 'TO001', 'ICT1222'),  
+    ('2025-11-12', 'Present', 'Practical', 'TG-014', NULL, 'TO001', 'ICT1222'),
+    ('2025-11-12', 'Present', 'Practical', 'TG-015', NULL, 'TO001', 'ICT1222'),
+    ('2025-11-12', 'Present', 'Practical', 'TG-016', NULL, 'TO001', 'ICT1222'),
+
+    ('2025-11-13', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1213'),
+    ('2025-11-13', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1213'),
+    ('2025-11-13', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1213'),
+    ('2025-11-13', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1213'),
+    ('2025-11-13', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1213'),
+    ('2025-11-13', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1213'),
+    ('2025-11-13', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1213'),
+    ('2025-11-13', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1213'),
+
+    ('2025-11-14', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1242'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1253'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1253'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1253'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1253'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1253'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1253'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1253'),
+    ('2025-11-14', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1253'),
+
+    ('2025-11-15', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-15', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-15', 'Absent', 'Lecture', 'TG-003', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-15', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-15', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-15', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-15', 'Present', 'Lecture', 'TG-015', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-15', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'ENG1212'),
+    ('2025-11-15', 'Absent', 'Lecture', 'TG-001', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-15', 'Present', 'Lecture', 'TG-002', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-15', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-15', 'Present', 'Lecture', 'TG-004', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-15', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-15', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-15', 'Absent', 'Lecture', 'TG-015', NULL, 'TO001', 'TCS1212'),
+    ('2025-11-15', 'Present', 'Lecture', 'TG-016', NULL, 'TO001', 'TCS1212'),
+
+    ('2025-11-18', 'Present', 'Lecture', 'TG-001', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-18', 'Absent', 'Lecture', 'TG-002', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-18', 'Present', 'Lecture', 'TG-003', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-18', 'Absent', 'Lecture', 'TG-004', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-18', 'Present', 'Lecture', 'TG-009', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-18', 'Present', 'Lecture', 'TG-014', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-18', 'Absent', 'Lecture', 'TG-015', NULL, 'TO001', 'ICT1233'),
+    ('2025-11-18', 'Absent', 'Lecture', 'TG-016', NULL, 'TO001', 'ICT1233');
+
+INSERT INTO Lecture_student VALUES
+    ('LC01','TG-001'), 
+    ('LC02','TG-001'), 
+    ('LC03','TG-001'), 
+    ('LC04','TG-001'), 
+    ('LC05','TG-001'), 
+    ('LC07','TG-001'), 
+    ('LC09','TG-001'), 
+
+    ('LC01','TG-002'), 
+    ('LC02','TG-002'), 
+    ('LC03','TG-002'), 
+    ('LC04','TG-002'), 
+    ('LC05','TG-002'), 
+    ('LC07','TG-002'), 
+    ('LC09','TG-002'),
+
+    ('LC01','TG-003'), 
+    ('LC02','TG-003'), 
+    ('LC03','TG-003'), 
+    ('LC04','TG-003'), 
+    ('LC05','TG-003'), 
+    ('LC07','TG-003'), 
+    ('LC09','TG-003'),
+
+    ('LC01','TG-004'), 
+    ('LC02','TG-004'), 
+    ('LC03','TG-004'), 
+    ('LC04','TG-004'), 
+    ('LC05','TG-004'), 
+    ('LC07','TG-004'), 
+    ('LC09','TG-004'),
+
+    ('LC06','TG-005'),
+    ('LC08','TG-005'),
+    ('LC09','TG-005'),
+
+    ('LC10','TG-006'), 
+    ('LC07','TG-006'),
+    ('LC09','TG-006'),
+
+    ('LC10','TG-007'), 
+    ('LC07','TG-007'),
+    ('LC09','TG-007'),
+
+    ('LC01','TG-008'), 
+    ('LC02','TG-008'), 
+    ('LC03','TG-008'), 
+    ('LC04','TG-008'), 
+    ('LC05','TG-008'), 
+    ('LC07','TG-008'), 
+    ('LC09','TG-008'),
+
+    ('LC01','TG-009'), 
+    ('LC02','TG-009'), 
+    ('LC03','TG-009'), 
+    ('LC04','TG-009'), 
+    ('LC05','TG-009'), 
+    ('LC07','TG-009'), 
+    ('LC09','TG-009'),
+
+    ('LC01','TG-010'), 
+    ('LC02','TG-010'), 
+    ('LC03','TG-010'), 
+    ('LC04','TG-010'), 
+    ('LC05','TG-010'), 
+    ('LC07','TG-010'), 
+    ('LC09','TG-010'),
+ 
+    ('LC10','TG-011'), 
+    ('LC07','TG-011'),
+    ('LC09','TG-011'),
+
+    ('LC10','TG-012'), 
+    ('LC07','TG-012'),
+    ('LC09','TG-012'),
+ 
+    ('LC10','TG-013'), 
+    ('LC07','TG-013'),
+    ('LC09','TG-013'),
+
+    ('LC01','TG-014'), 
+    ('LC02','TG-014'), 
+    ('LC03','TG-014'), 
+    ('LC04','TG-014'), 
+    ('LC05','TG-014'), 
+    ('LC07','TG-014'), 
+    ('LC09','TG-014'),
+
+    ('LC01','TG-015'), 
+    ('LC02','TG-015'), 
+    ('LC03','TG-015'), 
+    ('LC04','TG-015'), 
+    ('LC05','TG-015'), 
+    ('LC07','TG-015'), 
+    ('LC09','TG-015'),
+
+    ('LC01','TG-016'), 
+    ('LC02','TG-016'), 
+    ('LC03','TG-016'), 
+    ('LC04','TG-016'), 
+    ('LC05','TG-016'), 
+    ('LC07','TG-016'), 
+    ('LC09','TG-016'),
+
+    ('LC06','TG-017'),
+    ('LC08','TG-017'),
+    ('LC09','TG-017'),
+
+    ('LC06','TG-018'),
+    ('LC08','TG-018'),
+    ('LC09','TG-018'),
+
+    ('LC06','TG-019'),
+    ('LC08','TG-019'),
+    ('LC09','TG-019'),
+
+    ('LC06','TG-020'),
+    ('LC08','TG-020'),
+    ('LC09','TG-020');
+
+INSERT INTO Notice VALUES
+    ('N001','Faculty meeting on August 15th at 3:00 PM.','2025-08-10','LC01'),
+    ('N002','Class Cancellation on August 19th due to holiday','2025-08-15','LC05'),
+    ('N003','Library closure on September 20th for maintenance','2025-08-16','LC05'),
+    ('N004','Upcoming Midterm Exam Schedule', '2025-10-12','LC09'),                
+    ('N005','Guest Lecture on November 2st in the auditorium','2025-10-29','LC02'),
+    ('N006','Final exam schedule for the current semester','2025-11-11','LC03'),
+    ('N007','Graduation ceremony details for this year','2025-11-1','LC01');
+
+
+INSERT INTO Student_notice VALUES
+    ('TG-001','N001'), 
+    ('TG-001','N002'), 
+    ('TG-001','N003'), 
+    ('TG-001','N004'), 
+    ('TG-001','N005'), 
+    ('TG-001','N006'), 
+    ('TG-001','N007'), 
+
+    ('TG-002','N001'), 
+    ('TG-002','N002'), 
+    ('TG-002','N003'), 
+    ('TG-002','N004'), 
+    ('TG-002','N005'), 
+    ('TG-002','N006'), 
+    ('TG-002','N007'),
+
+    ('TG-003','N001'), 
+    ('TG-003','N002'), 
+    ('TG-003','N003'), 
+    ('TG-003','N004'), 
+    ('TG-003','N005'), 
+    ('TG-003','N006'), 
+    ('TG-003','N007'),
+
+    ('TG-004','N001'), 
+    ('TG-004','N002'), 
+    ('TG-004','N003'), 
+    ('TG-004','N004'), 
+    ('TG-004','N005'), 
+    ('TG-004','N006'), 
+    ('TG-004','N007'),
+
+    ('TG-005','N001'), 
+    ('TG-005','N002'), 
+    ('TG-005','N003'), 
+    ('TG-005','N004'), 
+    ('TG-005','N005'), 
+    ('TG-005','N006'), 
+    ('TG-005','N007'),
+
+    ('TG-006','N001'), 
+    ('TG-006','N002'), 
+    ('TG-006','N003'), 
+    ('TG-006','N004'), 
+    ('TG-006','N005'), 
+    ('TG-006','N006'), 
+    ('TG-006','N007'),
+
+    ('TG-007','N001'), 
+    ('TG-007','N002'), 
+    ('TG-007','N003'), 
+    ('TG-007','N004'), 
+    ('TG-007','N005'), 
+    ('TG-007','N006'), 
+    ('TG-007','N007'),
+
+    ('TG-008','N001'), 
+    ('TG-008','N002'), 
+    ('TG-008','N003'), 
+    ('TG-008','N004'), 
+    ('TG-008','N005'), 
+    ('TG-008','N006'), 
+    ('TG-008','N007'),
+
+    ('TG-009','N001'), 
+    ('TG-009','N002'), 
+    ('TG-009','N003'), 
+    ('TG-009','N004'), 
+    ('TG-009','N005'), 
+    ('TG-009','N006'), 
+    ('TG-009','N007'),
+
+    ('TG-010','N001'), 
+    ('TG-010','N002'), 
+    ('TG-010','N003'), 
+    ('TG-010','N004'), 
+    ('TG-010','N005'), 
+    ('TG-010','N006'), 
+    ('TG-010','N007'),
+
+    ('TG-011','N001'), 
+    ('TG-011','N002'), 
+    ('TG-011','N003'), 
+    ('TG-011','N004'), 
+    ('TG-011','N005'), 
+    ('TG-011','N006'), 
+    ('TG-011','N007'),
+
+    ('TG-012','N001'), 
+    ('TG-012','N002'), 
+    ('TG-012','N003'), 
+    ('TG-012','N004'), 
+    ('TG-012','N005'), 
+    ('TG-012','N006'), 
+    ('TG-012','N007'),
+
+    ('TG-013','N001'), 
+    ('TG-013','N002'), 
+    ('TG-013','N003'), 
+    ('TG-013','N004'), 
+    ('TG-013','N005'), 
+    ('TG-013','N006'), 
+    ('TG-013','N007'),
+
+    ('TG-014','N001'), 
+    ('TG-014','N002'), 
+    ('TG-014','N003'), 
+    ('TG-014','N004'), 
+    ('TG-014','N005'), 
+    ('TG-014','N006'), 
+    ('TG-014','N007'),
+
+    ('TG-015','N001'), 
+    ('TG-015','N002'), 
+    ('TG-015','N003'), 
+    ('TG-015','N004'), 
+    ('TG-015','N005'), 
+    ('TG-015','N006'), 
+    ('TG-015','N007'),
+
+    ('TG-016','N001'), 
+    ('TG-016','N002'), 
+    ('TG-016','N003'), 
+    ('TG-016','N004'), 
+    ('TG-016','N005'), 
+    ('TG-016','N006'), 
+    ('TG-016','N007'),
+
+    ('TG-017','N001'), 
+    ('TG-017','N002'), 
+    ('TG-017','N003'), 
+    ('TG-017','N004'), 
+    ('TG-017','N005'), 
+    ('TG-017','N006'), 
+    ('TG-017','N007'),
+
+    ('TG-018','N001'), 
+    ('TG-018','N002'), 
+    ('TG-018','N003'), 
+    ('TG-018','N004'), 
+    ('TG-018','N005'), 
+    ('TG-018','N006'), 
+    ('TG-018','N007'),
+
+    ('TG-019','N001'), 
+    ('TG-019','N002'), 
+    ('TG-019','N003'), 
+    ('TG-019','N004'), 
+    ('TG-019','N005'), 
+    ('TG-019','N006'), 
+    ('TG-019','N007'),
+
+    ('TG-020','N001'), 
+    ('TG-020','N002'), 
+    ('TG-020','N003'), 
+    ('TG-020','N004'), 
+    ('TG-020','N005'), 
+    ('TG-020','N006'), 
+    ('TG-020','N007');
+
+
+--View User Datails --
+
+SELECT 
+    d.dean_id AS "Dean ID",CONCAT(u.f_name," ",u.l_name) AS "Name",
+    u.nic AS "NIC Number",u.address AS "Address",u.email AS "Email",
+    u.gender AS "Gender",u.bod AS "Born Date"
+FROM User u INNER JOIN Dean d ON d.nic = u.nic;
+
+SELECT 
+    s.student_id AS "Student ID",CONCAT(u.f_name," ",u.l_name) AS "Name",
+    u.nic AS "NIC Number",u.address AS "Address",u.email AS "Email",
+    u.gender AS "Gender",s.state AS "Type",u.bod AS "Born Date",
+    d.dep_name AS "Department"
+FROM User u INNER JOIN Student s ON s.nic = u.nic
+INNER JOIN Department d ON d.dep_id = s.dep_id;
+
+SELECT 
+    l.lecture_id AS "Lecture ID",CONCAT(u.f_name," ",u.l_name) AS "Name",
+    u.nic AS "NIC Number",u.address AS "Address",u.email AS "Email",
+    u.gender AS "Gender",l.position AS "Type",u.bod AS "Born Date",
+    d.dep_name AS "Department"
+FROM User u INNER JOIN lecture l ON l.nic = u.nic
+INNER JOIN Department d ON d.dep_id = l.dep_id;
+
+SELECT 
+    t.tech_officer_id AS "Tech-Officer ID",CONCAT(u.f_name," ",u.l_name) AS "Name",
+    u.nic AS "NIC Number",t.role AS "Role",u.address AS "Address",u.email AS "Email",
+    u.gender AS "Gender",u.bod AS "Born Date"
+FROM User u INNER JOIN Technical_officer t ON t.nic = u.nic;
+
+SELECT 
+    a.Admin_id AS "Admin ID",CONCAT(u.f_name," ",u.l_name) AS "Name",
+    u.nic AS "NIC Number",a.role AS "Role",u.address AS "Address",u.email AS "Email",
+    u.gender AS "Gender",u.bod AS "Born Date"
+FROM User u INNER JOIN admin a ON a.nic = u.nic;
+
+--view all notice --
+SELECT date,description AS 'Notice'
+FROM notice 
+ORDER BY Date ;
+
+
+
+CREATE VIEW All_Attendence AS
+SELECT
+     student_id,
+     course_code,
+     ROUND(COUNT(CASE WHEN att_state = 'Present' OR medical_id IS NOT NULL THEN 1 END) * 100.0 / 15,2)AS Attendance_Percentage
+ FROM
+     Attendence
+ GROUP BY
+     student_id, course_code;
+
+SELECT * FROM All_Attendence;
+
+
+
+
+
+
+
+
+
+
+CREATE VIEW AttendanceEligibilitySummary AS
+    SELECT
+     student_id,
+     course_code,
+        ROUND(COUNT(CASE WHEN att_state = 'Present' OR medical_id IS NOT NULL THEN 1 END) * 100.0 / 15,2) AS Attendance_Percentage,
+        IF(COUNT(CASE WHEN att_state = 'Present' OR medical_id IS NOT NULL THEN 1 END) * 100.0 / 15 >= 80, 'Eligible', 'Not Eligible') AS Eligibility
+    FROM
+        Attendence
+    GROUP BY
+        student_id, course_code;
+
+
+SELECT * FROM AttendanceEligibilitySummary ;
+
+
+
+
+
+
+
+
+
+
+
+CREATE VIEW CA_Result_Without_Attendance AS SELECT mark_id,mark.student_id,course_code,
+    (((quiz_1 + quiz_2 + quiz_3) - LEAST(quiz_1, quiz_2, quiz_3)) / 2) * 0.10 AS Quiz_marks,
+    (assesment * 0.05) AS Assesment_marks,
+    CASE 
+        WHEN mid_practical = 0 THEN (mid_theory * 0.25) 
+        ELSE (((mid_theory + mid_practical) / 2) * 0.25) 
+    END AS Mid_marks,
+
+    (((((quiz_1 + quiz_2 + quiz_3) - LEAST(quiz_1, quiz_2, quiz_3)) / 2) * 0.10) + (assesment * 0.05) + 
+    CASE 
+            WHEN mid_practical = 0 THEN (mid_theory * 0.25) 
+            ELSE (((mid_theory + mid_practical) / 2) * 0.25) 
+        END) AS CA_marks,
+    CASE 
+        WHEN (((((quiz_1 + quiz_2 + quiz_3) - LEAST(quiz_1, quiz_2, quiz_3)) / 2) * 0.10) + (assesment * 0.05) + CASE 
+                   WHEN mid_practical = 0 THEN (mid_theory * 0.25) 
+                   ELSE (((mid_theory + mid_practical) / 2) * 0.25) 
+               END) >= 20 THEN 'Eligible' 
+        ELSE 'Not Eligible' END AS Eligibility FROM Mark
+        INNER JOIN student ON mark.student_id = student.student_id WHERE state != 'suspended';
+
+        SELECT * FROM CA_Result_Without_Attendance ;
+
+
+
+
+
+
+
+
+
+CREATE VIEW CA_Result_With_Attendance AS 
+SELECT 
+    c.course_code,
+    c.student_id,
+    a.Eligibility AS Attendace_Eligibility,
+    c.Eligibility AS CA_Eligibility,
+    IF(a.Eligibility='Eligible' AND c.Eligibility='Eligible','Eligible','Not Eligible') AS Eligibility
+FROM 
+    AttendanceEligibilitySummary a, CA_Result_Without_Attendance c
+WHERE 
+    a.student_id=c.student_id 
+    AND c.course_code=a.course_code
+GROUP BY 
+    c.student_id, 
+    c.course_code, 
+    a.Eligibility,    
+    c.Eligibility;   
+
+    SELECT * FROM CA_Result_With_Attendance;
+
+
+
+
+
+
+
+
+
+CREATE VIEW final_marks AS
+SELECT 
+    m.mark_id,
+    MIN(m.student_id) AS student_id,
+    MIN(m.course_code) AS course_code,
+    CASE
+        WHEN (m.end_practical = 0 OR m.mid_practical = 0)
+            THEN ((m.end_theory / 100) * 60) + cwoa.CA_marks
+        WHEN (m.end_theory = 0 OR m.mid_theory = 0)
+            THEN ((m.end_practical / 100) * 60) + cwoa.CA_marks
+        ELSE
+            (((m.end_practical + m.end_theory) / 200) * 60) + cwoa.CA_marks
+    END AS final_result
+FROM 
+    mark m
+INNER JOIN 
+    ca_result_with_attendance cwa ON m.student_id = cwa.student_id AND m.course_code = cwa.course_code 
+INNER JOIN
+    ca_result_without_attendance cwoa ON m.student_id = cwoa.student_id AND m.course_code = cwoa.course_code
+WHERE 
+    cwa.CA_Eligibility = 'Eligible' 
+    AND cwa.Eligibility = 'Eligible'
+GROUP BY 
+    m.mark_id, 
+    m.end_practical,        
+    m.mid_practical,        
+    m.end_theory,          
+    m.mid_theory,          
+    cwoa.CA_marks,          
+    cwa.CA_Eligibility,     
+    cwa.Eligibility,        
+    cwa.student_id,         
+    cwoa.student_id,      
+    cwa.course_code,     
+    cwoa.course_code       
+ORDER BY 
+    student_id ASC;
+
+SELECT * FROM final_marks;
+
+
+
+
+
+
+
+
+CREATE VIEW exam_mark_without_final_mark AS
+SELECT
+    s.student_id,
+    m.course_code,
+    m.end_theory,
+    m.end_practical,
+    CASE
+        WHEN m.end_theory = 0 THEN m.end_practical * 0.6
+        WHEN m.end_practical = 0 THEN m.end_theory * 0.6
+        WHEN m.end_theory IS NOT NULL AND m.end_practical IS NOT NULL THEN ROUND(((end_theory + end_practical) /200)*60)
+        ELSE NULL
+    END AS final_exam_mark
+FROM mark m 
+INNER JOIN student s  ON s.student_id = m.student_id
+    WHERE s.state != 'suspended';
+
+SELECT * FROM exam_mark_without_final_mark;
+
+
+
+
+
+
+
+
+
+
+CREATE  VIEW mark_and_student AS
+SELECT 
+    student.student_id, 
+    student.state,
+    mark.course_code,
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.quiz_1
+    END AS quiz_1,
+
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.quiz_2
+    END AS quiz_2,
+
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.quiz_3
+    END AS quiz_3,
+
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.assesment
+    END AS assesment,
+
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.mid_theory
+    END AS mid_theory,
+
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.mid_practical
+    END AS mid_practical,
+
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.end_theory
+    END AS end_theory,
+
+    CASE 
+        WHEN student.state = 'suspended' THEN 'WH'
+        ELSE mark.end_practical
+    END AS end_practical
+FROM mark
+INNER JOIN student ON mark.student_id = student.student_id;
+
+select * from mark_and_student;
+
+
+
+
+
+
+
+
+
+CREATE VIEW Student_Grade AS 
+SELECT 
+    a.student_id, 
+    a.Course_code,
+    f.final_result,
+    
+    CASE
+        WHEN f.final_result >= 85 AND f.final_result <= 100 THEN 'A+'
+        WHEN f.final_result >= 75 AND f.final_result < 85 THEN 'A'
+        WHEN f.final_result >= 70 AND f.final_result < 75 THEN 'A-'
+        WHEN f.final_result >= 65 AND f.final_result < 70 THEN 'B+'
+        WHEN f.final_result >= 60 AND f.final_result < 65 THEN 'B'
+        WHEN f.final_result >= 55 AND f.final_result < 60 THEN 'B-'
+        WHEN f.final_result >= 50 AND f.final_result < 55 THEN 'C+'
+        WHEN f.final_result >= 45 AND f.final_result < 50 THEN 'C'
+        WHEN f.final_result >= 40 AND f.final_result < 45 THEN 'C-'
+        WHEN f.final_result >= 35 AND f.final_result < 40 THEN 'D'
+        WHEN f.final_result >= 0 AND f.final_result < 35 THEN 'E'
+    END AS Grade,
+
+    CASE
+        WHEN f.final_result >= 85 AND f.final_result <= 100 THEN 4.0
+        WHEN f.final_result >= 75 AND f.final_result < 85 THEN 4.0
+        WHEN f.final_result >= 70 AND f.final_result < 75 THEN 3.7
+        WHEN f.final_result >= 65 AND f.final_result < 70 THEN 3.3
+        WHEN f.final_result >= 60 AND f.final_result < 65 THEN 3.0
+        WHEN f.final_result >= 55 AND f.final_result < 60 THEN 2.7
+        WHEN f.final_result >= 50 AND f.final_result < 55 THEN 2.3
+        WHEN f.final_result >= 45 AND f.final_result < 50 THEN 2.0
+        WHEN f.final_result >= 40 AND f.final_result < 45 THEN 1.7         
+        WHEN f.final_result >= 35 AND f.final_result < 40 THEN 1.3
+        WHEN f.final_result >= 0 AND f.final_result < 35 THEN 0.0
+    END AS Grade_Point,
+
+    c.course_credit  AS Credit
+
+FROM 
+    final_marks f
+INNER JOIN 
+    CA_Result_With_Attendance a ON a.Course_code = f.Course_code AND a.student_id = f.student_id
+INNER JOIN 
+    course c ON c.course_code = f.Course_code
+WHERE 
+    a.Eligibility = 'Eligible';
+
+select * from Student_Grade;
+
+
+
+
+
+
+
+CREATE VIEW Student_Grade_Credit AS 
+SELECT student_id,Credit,Course_code,(Grade_Point * Credit) AS pointCreditvalue FROM 
+Student_Grade ;
+
+
+
+
+
+
+
+CREATE VIEW SGPA AS
+SELECT s.student_id,(SUM(s.pointCreditvalue))/ SUM(s.Credit) AS SGPA
+FROM Student_Grade_Credit s
+INNER JOIN Course c  ON s.course_code = c.course_code 
+WHERE c.dep_id='D001' OR c.dep_id='D004'
+GROUP BY s.student_id;
+
+
+
+
+
+
+CREATE VIEW CGPA AS
+SELECT s.student_id,(SUM(s.pointCreditvalue))/ SUM(s.Credit) AS CGPA
+FROM Student_Grade_Credit s
+INNER JOIN Course c ON s.course_code = c.course_code 
+WHERE c.dep_id='D001' AND c.course_code != 'ENG1212'
+GROUP BY s.student_id;
+
+
+
+
+
+
+CREATE VIEW ALL_GPA AS 
+SELECT s.Student_ID,s.SGPA,c.CGPA FROM SGPA s,CGPA c
+WHERE s.Student_ID=c.Student_ID;
+
+
+-- Retrieve attendance summary by course code --
+
+DELIMITER //
+
+CREATE PROCEDURE GetAttendanceByCourse(IN courseCode CHAR(8))
+    BEGIN
+        SELECT
+            student_id,
+            course_code,
+            Attendance_Percentage,
+            Eligibility
+        FROM
+          AttendanceEligibilitySummary
+        WHERE
+            course_code = courseCode
+        GROUP BY
+            student_id, course_code;
+    END // 
+DELIMITER ;
+
+CALL GetAttendanceByCourse('ICT1212');
+
+-- Retrieve daily attendance for a specific student and course --
+
+DELIMITER //
+
+CREATE PROCEDURE GetDailyAttendance(IN stuID VARCHAR(6),IN cCode char(8))
+BEGIN
+	SELECT 
+        student_id,
+        course_code,
+        date,
+        att_state
+    FROM Attendence
+    WHERE student_id = stuID AND course_code = cCode;
+END //
+
+DELIMITER ;
+
+CALL GetDailyAttendance('TG-004','ICT1212');
+
+-- Retrieve overall attendance summary for a specific student using student id --
+
+DELIMITER //
+CREATE PROCEDURE GetAttendanceByStudent(IN stuId VARCHAR(6))
+BEGIN
+    SELECT
+        course_code,
+        Attendance_Percentage,
+        Eligibility
+    FROM
+        AttendanceEligibilitySummary
+    WHERE
+        student_id = stuId; 
+END //
+DELIMITER ;
+
+CALL GetAttendanceByStudent('TG-001');
+
+-- Retrieve attendance and eligibility by student and course using course-code and student id --
+
+DELIMITER //
+CREATE PROCEDURE CheckAtt_ByStuId_CourseCode(IN stuId VARCHAR(6), IN cCode char(8))
+BEGIN
+    SELECT
+        course_code,
+        Attendance_Percentage,
+        Eligibility
+    FROM
+        AttendanceEligibilitySummary
+    WHERE
+        student_id = stuId AND course_code = cCode; 
+END //
+DELIMITER ;
+
+CALL CheckAtt_ByStuId_CourseCode('TG-001','ICT1212');
+
+-- By giving Registration no as a summery----
+
+DELIMITER //
+CREATE PROCEDURE CA_Register_No(r_number VARCHAR(10))
+BEGIN
+SELECT mark_id,student_id,course_code,CA_marks FROM CA_Result_Without_Attendance 
+WHERE Eligibility='Eligible' AND student_id=r_number;
+END //
+DELIMITER ;
+CALL CA_Register_No('TG-001');
+
+-- By giving Registration no and corse code --
+
+DELIMITER //
+CREATE PROCEDURE CA_course_code_and_registration_no(IN r_number VARCHAR(10), IN c_code VARCHAR(10))
+BEGIN
+SELECT mark_id,student_id,CA_marks FROM CA_Result_Without_Attendance 
+WHERE Eligibility='Eligible' AND student_id=r_number AND course_code=c_code;
+END //
+DELIMITER ;
+CALL CA_course_code_and_registration_no('TG-002','ENG1212');
+
+
+-- By giving Corse code summary for whole batch --
+
+DELIMITER //
+CREATE PROCEDURE batch_summary(IN c_code VARCHAR(10))
+BEGIN
+SELECT mark_id,student_id,CA_marks FROM CA_Result_Without_Attendance 
+WHERE Eligibility='Eligible' AND course_code=c_code;
+END //
+DELIMITER ;
+CALL batch_summary('ENG1212');
+
+
+-- check each subject quize marks by using student_id----------
+
+DELIMITER //
+CREATE PROCEDURE SubjectQuizemarks (IN stID VARCHAR(20))
+BEGIN
+select  student_id,course_code,Quiz_marks from CA_Result_Without_Attendance where student_id = stID;
+END//
+DELIMITER ;
+CALL SubjectQuizemarks('TG-014');
+
+-- all student quize marks in one subject by using course_code --
+
+DELIMITER //
+CREATE PROCEDURE allstudentQuizemarks (IN subjectq VARCHAR(20))
+BEGIN
+select  student_id,course_code,Quiz_marks from CA_Result_Without_Attendance where course_code = subjectq ;
+END//
+DELIMITER ;
+CALL allstudentQuizemarks('ICT1233');
+
+-- one student mid exam marks by using student_id --
+
+DELIMITER //
+CREATE PROCEDURE Mid_Mark(IN  studentm VARCHAR(20) )
+BEGIN
+select student_id,course_code, Mid_marks from CA_Result_Without_Attendance where student_id= studentm;
+END//
+DELIMITER ;
+CALL Mid_Mark('TG-001');
+
+-- subjectvise mid marks by using course_code --
+DELIMITER //
+CREATE PROCEDURE subjectMid_Mark(IN coursem VARCHAR(20) )
+BEGIN
+select student_id,course_code, Mid_marks from CA_Result_Without_Attendance where course_code= coursem;
+END//
+DELIMITER ;
+
+CALL subjectMid_Mark('ENG1212');
+
+-- subject CA marks by using courese_code --
+
+DELIMITER //
+CREATE PROCEDURE SCAmarks(IN coursec VARCHAR(20))
+BEGIN
+select student_id,course_code,CA_marks from CA_Result_Without_Attendance where course_code=coursec;
+END//
+DELIMITER ;
+
+CALL SCAmarks('ENG1212');
+
+-- Student CA marks by using student_id --
+
+DELIMITER //
+CREATE PROCEDURE UCAmarks(IN studentc VARCHAR(20))
+BEGIN
+select student_id,course_code,CA_marks from CA_Result_Without_Attendance where student_id=studentc;
+END//
+DELIMITER ;
+
+
+CALL UCAmarks('TG-011');
+
+-- view final mark by student id -- 
+
+DELIMITER //
+
+CREATE PROCEDURE viewresult_from_id(
+    IN id_number VARCHAR(20)
+)
+BEGIN
+    SELECT DISTINCT course_code, final_result
+    FROM final_marks
+    WHERE student_id = id_number;
+END //
+
+DELIMITER ;
+
+CALL viewresult_from_id('TG-003');
+
+-- view_result_from_departmen --
+
+DELIMITER //
+
+CREATE PROCEDURE view_result_from_department(
+    IN Enter_dept_id CHAR(4)
+)
+BEGIN
+    SELECT 
+        course.dep_id,
+        final_marks.student_id,
+        course.course_code,
+        final_marks.final_result
+    FROM 
+        course
+    INNER JOIN 
+        final_marks ON course.course_code = final_marks.course_code
+    WHERE 
+        course.dep_id = Enter_dept_id;
+END //
+
+DELIMITER ;
+
+CALL view_result_from_department('D001');
+
+
+-- view Notice published by Lecturer --
+
+DELIMITER //
+
+CREATE PROCEDURE ViewLecturerNotice(IN lecture_id VARCHAR(5))
+BEGIN
+    SELECT date, description AS 'Notice'
+    FROM notice
+    WHERE notice.lecture_id = lecture_id; 
+END //
+
+DELIMITER ;
+
+CALL ViewLecturerNotice ('LC01');
+
