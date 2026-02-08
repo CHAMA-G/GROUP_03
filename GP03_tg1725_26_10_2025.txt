@@ -1,0 +1,43 @@
+-- By giving Registration no and corse code --
+
+DELIMITER //
+CREATE PROCEDURE CA_course_code_and_registration_no(IN r_number VARCHAR(10), IN c_code VARCHAR(10))
+BEGIN
+SELECT mark_id,student_id,CA_marks FROM CA_Result_Without_Attendance 
+WHERE Eligibility='Eligible' AND student_id=r_number AND course_code=c_code;
+END //
+DELIMITER ;
+CALL CA_course_code_and_registration_no('TG-002','ENG1212');
+
+
+-- By giving Corse code summary for whole batch --
+
+DELIMITER //
+CREATE PROCEDURE batch_summary(IN c_code VARCHAR(10))
+BEGIN
+SELECT mark_id,student_id,CA_marks FROM CA_Result_Without_Attendance 
+WHERE Eligibility='Eligible' AND course_code=c_code;
+END //
+DELIMITER ;
+CALL batch_summary('ENG1212');
+
+
+-- check each subject quize marks by using student_id----------
+
+DELIMITER //
+CREATE PROCEDURE SubjectQuizemarks (IN stID VARCHAR(20))
+BEGIN
+select  student_id,course_code,Quiz_marks from CA_Result_Without_Attendance where student_id = stID;
+END//
+DELIMITER ;
+CALL SubjectQuizemarks('TG-014');
+
+-- all student quize marks in one subject by using course_code --
+
+DELIMITER //
+CREATE PROCEDURE allstudentQuizemarks (IN subjectq VARCHAR(20))
+BEGIN
+select  student_id,course_code,Quiz_marks from CA_Result_Without_Attendance where course_code = subjectq ;
+END//
+DELIMITER ;
+CALL allstudentQuizemarks('ICT1233');
